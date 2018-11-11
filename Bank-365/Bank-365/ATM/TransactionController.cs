@@ -19,6 +19,8 @@ namespace Bank_365.ATM
                     return new CreditTransaction(user, amount);
                     break;
             }
+
+            return null;
         }
 
         
