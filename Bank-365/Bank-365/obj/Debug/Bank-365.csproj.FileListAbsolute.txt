@@ -1,0 +1,7 @@
+C:\Users\admin\Dropbox\CPP\Bank365-master\Bank-365\Bank-365\obj\Debug\Bank-365.csprojAssemblyReference.cache
+C:\Users\admin\Dropbox\CPP\Bank365-master\Bank-365\Bank-365\obj\Debug\Bank-365.csproj.CoreCompileInputs.cache
+C:\Users\admin\Dropbox\CPP\Bank365-master\Bank-365\Bank-365\bin\Debug\Bank-365.exe.config
+C:\Users\admin\Dropbox\CPP\Bank365-master\Bank-365\Bank-365\bin\Debug\Bank-365.exe
+C:\Users\admin\Dropbox\CPP\Bank365-master\Bank-365\Bank-365\bin\Debug\Bank-365.pdb
+C:\Users\admin\Dropbox\CPP\Bank365-master\Bank-365\Bank-365\obj\Debug\Bank-365.exe
+C:\Users\admin\Dropbox\CPP\Bank365-master\Bank-365\Bank-365\obj\Debug\Bank-365.pdb

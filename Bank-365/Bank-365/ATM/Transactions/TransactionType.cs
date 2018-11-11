@@ -4,12 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Bank_365
+namespace Bank_365.ATM.Transactions
 {
-    class Program
+    public enum TransactionType
     {
-        static void Main(string[] args)
-        {
-        }
+       Send,
+       Get,
+        Credit
     }
 }

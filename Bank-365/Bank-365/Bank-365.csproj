@@ -43,11 +43,21 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Program.cs" />
+    <Compile Include="ATM\AtmContext.cs" />
+    <Compile Include="ATM\Transactions\CreditTransaction.cs" />
+    <Compile Include="ATM\Transactions\SendTransaction.cs" />
+    <Compile Include="ATM\Transactions\Transaction.cs" />
+    <Compile Include="ATM\Transactions\TransactionDeniedException.cs" />
+    <Compile Include="ATM\Transactions\TransactionType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ATM\TransactionController.cs" />
+    <Compile Include="ATM\UserProxy.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
