@@ -6,10 +6,11 @@ using System.Threading.Tasks;
 
 namespace Bank_365.ATM.Transactions
 {
-    public enum TransactionType
+    public class GetTransaction : Transaction
     {
-       Send,
-       Get,
-       Credit
+        public GetTransaction(UserProxy.AtmUser user, int amount)  : base(user, TransactionType.Get)
+        {
+        }
+
     }
 }

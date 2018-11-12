@@ -6,15 +6,55 @@ using System.Threading.Tasks;
 
 namespace Bank_365.ATM.Transactions
 {
-    class CreditTransaction : Transaction
-    {
-        private UserProxy.AtmUser _user;
-        private UserProxy.CreditInfo _creditInfo;
+  public class CreditTransaction : Transaction
+  {
+    private UserProxy.CreditInfo _creditInfo;
 
-        public CreditTransaction(UserProxy.AtmUser user, UserProxy.CreditInfo creditInfo)
-        {
-            _user = user;
-            _creditInfo = creditInfo;
-        }
+    private double _amountLeft;
+
+    private int _currentMonthNumeber;
+
+    private int _monthLeft;
+
+    private double _monthPay;
+
+    private bool _creditPayed;
+
+    public bool CreditPayed => _creditPayed;
+
+
+    public CreditTransaction(UserProxy.AtmUser user, UserProxy.CreditInfo creditInfo) : base(user, TransactionType.Credit)
+    {
+      if (User.CreditLimit < creditInfo.Amount)
+      {
+        throw new TransactionDeniedException();
+      }
+      _creditInfo = creditInfo;
+      _amountLeft = creditInfo.Amount * creditInfo.Percent;
+      _monthLeft = _creditInfo.Time;
+      _monthPay = (_creditInfo.Amount * _creditInfo.Percent) / _creditInfo.Time;
     }
+
+    public override bool Do()
+    {
+      int month = DateTime.Today.Month;
+      if (month != _currentMonthNumeber)
+      {
+        _currentMonthNumeber = month;
+        if (base.User.WithdrawMoney(_monthPay))
+        {
+          _amountLeft -= _monthPay;
+          if (--_monthLeft == 0)
+          {
+            _creditPayed = true;
+          }
+
+          return true;
+        }
+
+      }
+
+      return false;
+    }
+  }
 }
