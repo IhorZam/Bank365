@@ -8,174 +8,179 @@ using System.Xml.Schema;
 
 namespace Bank_365.ATM
 {
-    public class AtmContext
+  public class AtmContext
+  {
+    private UserProxy _currentUser = null;
+
+    private Dictionary<string, UserProxy> _users;
+
+    private string _dictPath = "C:\\Users\\admin\\Dropbox\\CPP\\Bank365-master\\Bank-365\\Bank-365\\DictInfo.xml";
+
+    private XmlDocument usersData;
+
+    public UserProxy CurrentUser
     {
-        private UserProxy _currentUser = null;
+      get { return _currentUser; }
+      set { _currentUser = value; }
+    }
 
-        private Dictionary<string, UserProxy> _users;
+    public static void Main(string[] args)
+    {
+      //AtmContext atm = new AtmContext();
+      //atm.Initialize();
+    }
 
-        private string _dictPath = "C:\\Users\\admin\\Dropbox\\CPP\\Bank365-master\\Bank-365\\Bank-365\\DictInfo.xml";
+    public void Initialize()
+    {
+      usersData = new XmlDocument();
+      usersData.Load(_dictPath);
 
-        private XmlDocument usersData;
+      _users = new Dictionary<string, UserProxy>();
 
-        public UserProxy CurrentUser
-        {
-            get { return _currentUser; }
-            set { _currentUser = value; }
-        }
+      foreach (XmlNode node in usersData.DocumentElement.ChildNodes)
+      {
+        _users.Add(node.Name, new UserProxy(node.Name, node.Attributes["password"].InnerText));
+      }
 
-        public static void Main(string[] args)
-        {
-            //AtmContext atm = new AtmContext();
-            //atm.Initialize();
-        }
+      //-------------------------------------------
 
-        public void Initialize()
-        {           
-            usersData = new XmlDocument();
-            usersData.Load(_dictPath);
+      string inputCardNumber = null;
+      string inputCardPassword = null;
+      // XmlNode currentCard = null;
 
-            _users = new Dictionary<string, UserProxy>();
-
-            foreach (XmlNode node in usersData.DocumentElement.ChildNodes)
-            {
-                _users.Add(node.Name, new UserProxy(node.Name, node.Attributes["password"].InnerText));
-            }
-
-            //-------------------------------------------
-
-            string inputCardNumber = null;
-            string inputCardPassword = null;
-            // XmlNode currentCard = null;
-
-        CardNumberRequest:
-            Console.WriteLine("Type in your card number: ");
-            inputCardNumber = Console.ReadLine();
-            while (!ValidateInputCardNumber(inputCardNumber))
-                inputCardNumber = Console.ReadLine();
+      while (true)
+      {
+        Console.WriteLine("Type in your card number: ");
+        inputCardNumber = Console.ReadLine();
+        while (!ValidateInputCardNumber(inputCardNumber))
+          inputCardNumber = Console.ReadLine();
 
 
-            if (_users.ContainsKey(inputCardNumber))
-                CurrentUser = _users[inputCardNumber];
-            /*
-            foreach (XmlNode node in usersData.DocumentElement.ChildNodes)
-            {
-                if (inputCardNumber == node.Name)
-                    currentCard = node;
-            }
-            */
+        if (_users.ContainsKey(inputCardNumber))
+          CurrentUser = _users[inputCardNumber];
 
-            /*
-            if (currentCard == null)
-            {
-                Console.WriteLine("Wrong card number. Try again.");
-                goto CardNumberRequest;
-            }
-            */
-
-            if (CurrentUser == null)
-            {
-                Console.WriteLine("Wrong card number. Try again.");
-                goto CardNumberRequest;
-            }
-
-            /*
-            if (currentCard.Attributes["blocked"].InnerText == "1")
-            {
-                Console.WriteLine("Card is blocked.");
-                currentCard = null;
-                inputCardNumber = null;
-                goto CardNumberRequest;
-            }
-            */
-            
-            PasswordRequest:
-            int attempts = 3;
-            Console.WriteLine("Type in your card password: ");
-            inputCardPassword = Console.ReadLine();
-            while (!ValidateInputCardPassword(inputCardPassword))
-                inputCardPassword = Console.ReadLine();
-
-
-            /*if (inputCardPassword != currentCard.Attributes["cardPassword"].InnerText)
-            {
-                
-                if (--attempts == 0)
-                {                 
-                    BlockCard(currentCard);
-                    Console.WriteLine("Wrong password. Your card is blocked.");
-                    currentCard = null;
-                    inputCardNumber = null;
-                    goto CardNumberRequest;
-                }
-                
-                
-
-                Console.WriteLine("Wrong password." + attempts + "attempts left.");
-                goto PasswordRequest;
-            }*/
-
-            if (!CurrentUser.ValidateUser(inputCardPassword))
-            {
-                /*
-                if (--attempts == 0)
-                {
-                    CurrentUser.BlockUser();
-                    Console.WriteLine("Wrong password. Your card is blocked.");
-                    goto CardNumberRequest;
-                }
-                */
-
-                Console.WriteLine("Wrong password." + attempts + "attempts left.");
-                goto PasswordRequest;
-            }
-
-                return;            
-        }
 
         /*
-        private void BlockCard(XmlNode currentUser)
+        foreach (XmlNode node in usersData.DocumentElement.ChildNodes)
         {
-            XmlNode newUserData = currentUser;
-            newUserData.Attributes["blocked"].Value = "1";
-            usersData.DocumentElement.ReplaceChild(currentUser, newUserData);
-            throw new NotImplementedException();
+            if (inputCardNumber == node.Name)
+                currentCard = node;
         }
         */
 
-        private bool ValidateInputCardPassword(string inputCardPassword)
+        /*
+        if (currentCard == null)
         {
-            if (inputCardPassword.Length != 4)
-            {
-                Console.WriteLine("Invalid length. Try again.");
-                return false;
-            }
+            Console.WriteLine("Wrong card number. Try again.");
+            continue;
+        }
+        */
 
-            if (!inputCardPassword.All(char.IsDigit))
-            {
-                Console.WriteLine("Not a number. Try again.");
-                return false;
-            }
-
-            return true;
+        if (CurrentUser == null)
+        {
+          Console.WriteLine("Wrong card number. Try again.");
+          continue;
         }
 
-        private bool ValidateInputCardNumber(string inputCardNumber)
+        /*
+        if (currentCard.Attributes["blocked"].InnerText == "1")
         {
-            inputCardNumber.Replace(@"\s+", "");
-            if (inputCardNumber.Length != 16)
-            {
-                Console.WriteLine("Invalid length. Try again.");
-                return false;
-            }
-
-            if (!inputCardNumber.All(char.IsDigit))
-            {
-                Console.WriteLine("Not a number. Try again.");
-                return false;
-            } 
-               
-            return true;
+            Console.WriteLine("Card is blocked.");
+            currentCard = null;
+            inputCardNumber = null;
+            continue;
         }
+        */
+
+        int attempts = 3;
+        for (int i = 0; i < attempts; i++)
+        {
+          Console.WriteLine("Type in your card password: ");
+          inputCardPassword = Console.ReadLine();
+          while (!ValidateInputCardPassword(inputCardPassword))
+            inputCardPassword = Console.ReadLine();
+
+
+          /*if (inputCardPassword != currentCard.Attributes["cardPassword"].InnerText)
+          {
+
+              if (--attempts == 0)
+              {                 
+                  BlockCard(currentCard);
+                  Console.WriteLine("Wrong password. Your card is blocked.");
+                  currentCard = null;
+                  inputCardNumber = null;
+                  goto CardNumberRequest;
+              }
+
+              Console.WriteLine("Wrong password." + attempts + "attempts left.");
+              goto PasswordRequest;
+          }*/
+
+          if (!CurrentUser.ValidateUser(inputCardPassword))
+          {
+            /*
+            if (--attempts == 0)
+            {
+                CurrentUser.BlockUser();
+                Console.WriteLine("Wrong password. Your card is blocked.");
+                break;
+            }
+            */
+            Console.WriteLine("Wrong password." + attempts + "attempts left.");
+            continue;
+          }
+          else
+          {
+            // Продовжуємо працювати у UserProxy
+          }
+        }
+      }
     }
+
+    /*
+    private void BlockCard(XmlNode currentUser)
+    {
+        XmlNode newUserData = currentUser;
+        newUserData.Attributes["blocked"].Value = "1";
+        usersData.DocumentElement.ReplaceChild(currentUser, newUserData);
+        throw new NotImplementedException();
+    }
+    */
+
+    private bool ValidateInputCardPassword(string inputCardPassword)
+    {
+      if (inputCardPassword.Length != 4)
+      {
+        Console.WriteLine("Invalid length. Try again.");
+        return false;
+      }
+
+      if (!inputCardPassword.All(char.IsDigit))
+      {
+        Console.WriteLine("Not a number. Try again.");
+        return false;
+      }
+
+      return true;
+    }
+
+    private bool ValidateInputCardNumber(string inputCardNumber)
+    {
+      inputCardNumber.Replace(@"\s+", "");
+      if (inputCardNumber.Length != 16)
+      {
+        Console.WriteLine("Invalid length. Try again.");
+        return false;
+
+      }
+      if (!inputCardNumber.All(char.IsDigit))
+      {
+        Console.WriteLine("Not a number. Try again.");
+        return false;
+      }
+
+      return true;
+    }
+  }
 }
