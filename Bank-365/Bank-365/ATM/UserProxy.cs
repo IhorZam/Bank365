@@ -8,59 +8,25 @@ namespace Bank_365.ATM
   {
     private AtmUser _user;
 
-    private TransactionController _transactionController;
-
-    private List<Transaction> _userTransactions;
-
+    public double CreditLimit()
+    {
+      return _user.CreditLimit;
+    }
+    
     public UserProxy(string cardNumber, string cardPassword)
     {
       _user = new AtmUser(cardNumber, cardPassword);
 
     }
 
-    public void Update()
+    public bool WithdrawMoney(double amount)
     {
-      foreach (var transaction in _userTransactions)
-      {
-        if (!transaction.Do())
-          throw new TransactionDeniedException();
-        if (transaction.Type == TransactionType.Credit)
-        {
-          CreditTransaction aux = (CreditTransaction)transaction;
-          if (aux.CreditPayed)
-            _userTransactions.Remove(transaction);
-        }
-        else
-        {
-          _userTransactions.Remove(transaction);
-        }
-      }
+      return _user.WithdrawMoney(amount);
     }
 
-    public bool ValidateUser(string password)
+    public void SetCreditLimit(double limit)
     {
-      return _user.ValidatePassword(password);
-    }
-
-    public void CreateTransaction(TransactionType type, int amount, ref AtmUser receiver)
-    {
-      ref var userRef = ref _user;
-      switch (type)
-      {
-        case TransactionType.Send:
-          _userTransactions.Add(_transactionController.CreateNewTransaction(userRef, amount, receiver));
-          break;
-        case TransactionType.Get:
-          _userTransactions.Add(_transactionController.CreateNewTransaction(userRef, amount));
-          break;
-
-      }
-
-    }
-
-    public void GetCredit(CreditInfo creditInfo)
-    {
-      _userTransactions.Add(_transactionController.CreateNewTransaction(_user, creditInfo));
+      _user.SetCreditLimit(limit);
     }
 
     public class AtmUser
@@ -95,18 +61,11 @@ namespace Bank_365.ATM
       }
 
 
-      public void SetCreditLimit(int newLimit)
+      public void SetCreditLimit(double newLimit)
       {
         _creditLimit = newLimit;
       }
-
-      public bool ValidatePassword(string password)
-      {
-        if (password == _cardPassword)
-          return true;
-        return false;
-      }
-
+      
     }
 
     public struct CreditInfo

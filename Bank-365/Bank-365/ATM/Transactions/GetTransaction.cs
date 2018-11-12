@@ -8,7 +8,7 @@ namespace Bank_365.ATM.Transactions
 {
     public class GetTransaction : Transaction
     {
-        public GetTransaction(UserProxy.AtmUser user, int amount)  : base(user, TransactionType.Get)
+        public GetTransaction(string user, int amount)  : base(user, TransactionType.Get)
         {
         }
 

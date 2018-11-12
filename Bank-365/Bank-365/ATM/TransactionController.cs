@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System.Collections.Generic;
+using System.Reflection;
 using Bank_365.ATM.Transactions;
 
 namespace Bank_365.ATM
@@ -7,21 +8,46 @@ namespace Bank_365.ATM
   {
 
 
+    private List<Transaction> _transactions;
 
-    public Transaction CreateNewTransaction(UserProxy.AtmUser user, int amount, UserProxy.AtmUser receiver)
+    public TransactionController()
     {
-      return new SendTransaction(user, amount, receiver);
+      _transactions = new List<Transaction>();
+    }
+
+    public void Update()
+    {
+      foreach (var transaction in _transactions)
+      {
+        transaction.Do();
+        if (transaction.Type == TransactionType.Credit)
+        {
+          CreditTransaction aux = (CreditTransaction) transaction;
+          if (aux.CreditPayed)
+            _transactions.Remove(transaction);
+        }
+        else
+        {
+          _transactions.Remove(transaction);
+        }
+      }
+    }
+
+
+    public void CreateNewTransaction(string user, int amount, UserProxy.AtmUser receiver)
+    {
+       _transactions.Add(new SendTransaction(user, amount, receiver));
 
     }
 
-    public Transaction CreateNewTransaction(UserProxy.AtmUser user, UserProxy.CreditInfo creditInfo)
+    public void CreateNewTransaction(string user, UserProxy.CreditInfo creditInfo)
     {
-      return new CreditTransaction(user, creditInfo);
+      _transactions.Add(new CreditTransaction(user, creditInfo));
     }
 
-    public Transaction CreateNewTransaction(UserProxy.AtmUser user, int amount)
+    public void CreateNewTransaction(string user, int amount)
     {
-      return new GetTransaction(user, amount);
+      _transactions.Add(new GetTransaction(user, amount));
     }
 
 

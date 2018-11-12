@@ -11,7 +11,7 @@ namespace Bank_365.ATM.Transactions
         private int _amount;
         private UserProxy.AtmUser _receiver;
 
-        public SendTransaction(UserProxy.AtmUser user, int amount,  UserProxy.AtmUser receiver) : base(user, TransactionType.Send)
+        public SendTransaction(string user, int amount,  UserProxy.AtmUser receiver) : base(user, TransactionType.Send)
         {
             _amount = amount;
             _receiver = receiver;

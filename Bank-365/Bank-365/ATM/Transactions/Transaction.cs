@@ -11,19 +11,19 @@ namespace Bank_365.ATM.Transactions
   {
     private TransactionType _type;
 
-    private UserProxy.AtmUser _user;
+    private string _userId;
 
     public TransactionType Type => _type;
 
-    public UserProxy.AtmUser User
+    public string UserId
     {
-      get { return _user;  }
-      set { _user = value; }
+      get { return _userId;  }
+      set { _userId = value; }
     }
 
-    public Transaction(UserProxy.AtmUser user, TransactionType type)
+    public Transaction(string user, TransactionType type)
     {
-      _user = user;
+      _userId = user;
       _type = type;
     }
 

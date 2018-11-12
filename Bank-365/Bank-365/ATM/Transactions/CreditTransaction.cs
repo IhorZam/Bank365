@@ -23,9 +23,9 @@ namespace Bank_365.ATM.Transactions
     public bool CreditPayed => _creditPayed;
 
 
-    public CreditTransaction(UserProxy.AtmUser user, UserProxy.CreditInfo creditInfo) : base(user, TransactionType.Credit)
+    public CreditTransaction(string user, UserProxy.CreditInfo creditInfo) : base(user, TransactionType.Credit)
     {
-      if (User.CreditLimit < creditInfo.Amount)
+      if (DataBase.Users[user].CreditLimit() < creditInfo.Amount)
       {
         throw new TransactionDeniedException();
       }
@@ -41,7 +41,7 @@ namespace Bank_365.ATM.Transactions
       if (month != _currentMonthNumeber)
       {
         _currentMonthNumeber = month;
-        if (base.User.WithdrawMoney(_monthPay))
+        if (DataBase.Users[base.UserId].WithdrawMoney(_monthPay))
         {
           _amountLeft -= _monthPay;
           if (--_monthLeft == 0)
