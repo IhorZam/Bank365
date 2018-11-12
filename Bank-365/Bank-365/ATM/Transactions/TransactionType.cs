@@ -9,7 +9,6 @@ namespace Bank_365.ATM.Transactions
     public enum TransactionType
     {
        Send,
-       Get,
-        Credit
+       Credit
     }
 }

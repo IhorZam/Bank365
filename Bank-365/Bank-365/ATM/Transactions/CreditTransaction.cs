@@ -8,13 +8,13 @@ namespace Bank_365.ATM.Transactions
 {
     class CreditTransaction : Transaction
     {
-        private UserProxy.AtmUser user;
-        private int amount;
+        private UserProxy.AtmUser _user;
+        private UserProxy.CreditInfo _creditInfo;
 
-        public CreditTransaction(UserProxy.AtmUser user, int amount)
+        public CreditTransaction(UserProxy.AtmUser user, UserProxy.CreditInfo creditInfo)
         {
-            this.user = user;
-            this.amount = amount;
+            _user = user;
+            _creditInfo = creditInfo;
         }
     }
 }

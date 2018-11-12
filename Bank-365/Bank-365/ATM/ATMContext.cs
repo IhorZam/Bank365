@@ -115,7 +115,7 @@ namespace Bank_365.ATM
                 goto PasswordRequest;
             }*/
 
-            if (!CurrentUser.checkPassword(inputCardPassword))
+            if (!CurrentUser.ValidateUser(inputCardPassword))
             {
                 /*
                 if (--attempts == 0)

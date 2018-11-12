@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Bank_365.ATM.Transactions;
 
 namespace Bank_365.ATM
@@ -35,14 +36,22 @@ namespace Bank_365.ATM
             return _user.ValidatePassword(password);
         }
 
-        public void CreateTransaction(TransactionType type, int amount)
+        public void CreateTransaction(TransactionType type, int amount, ref UserProxy.AtmUser receiver)
         {
-            _userTransactions.Add(_transactionController.CreateNewTransaction(_user, type, amount));
+            ref UserProxy.AtmUser user_ref = ref _user;
+            switch (type)
+            {
+                case TransactionType.Send:
+                    _userTransactions.Add(_transactionController.CreateNewTransaction(user_ref, amount, receiver));
+                    break;
+
+            }
+            
         }
 
-        public void GetCredit(int creditAmount)
+        public void GetCredit(CreditInfo creditInfo)
         {
-            _userTransactions.Add( _transactionController.CreateNewTransaction(_user, TransactionType.Credit, creditAmount));
+            _userTransactions.Add( _transactionController.CreateNewTransaction(_user, creditInfo));
         }
 
         public class AtmUser
@@ -72,6 +81,13 @@ namespace Bank_365.ATM
                 return false;
             }
             
+        }
+
+        public struct CreditInfo
+        {
+            public int Amount;
+            public DateTime Time;
+            public double Percent;
         }
     }
 

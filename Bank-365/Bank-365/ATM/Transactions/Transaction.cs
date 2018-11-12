@@ -10,7 +10,7 @@ namespace Bank_365.ATM.Transactions
     {
         public TransactionType Type { get; internal set; }
 
-        public bool Do()
+        public virtual bool Do()
         {
             return true;
         } 

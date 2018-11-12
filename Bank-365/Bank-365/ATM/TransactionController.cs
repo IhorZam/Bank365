@@ -8,23 +8,19 @@ namespace Bank_365.ATM
 
 
 
-        public Transaction CreateNewTransaction(UserProxy.AtmUser user, TransactionType type, int amount)
+        public Transaction CreateNewTransaction(UserProxy.AtmUser user, int amount, UserProxy.AtmUser receiver)
         {
-            switch (type)
-            {
-                case TransactionType.Send:
-                    return new SendTransaction(user, amount);
-                    break;
-                case TransactionType.Credit:
-                    return new CreditTransaction(user, amount);
-                    break;
-            }
 
-            return null;
+            return new SendTransaction(user, amount, receiver);
+
         }
 
-        
+        public Transaction CreateNewTransaction(UserProxy.AtmUser user, UserProxy.CreditInfo creditInfo)
+        {
+            return new CreditTransaction(user, creditInfo);
+        }
+
+
     }
 }
 
-    
