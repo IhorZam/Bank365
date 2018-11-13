@@ -2,12 +2,14 @@
 using System;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Xml;
 using System.Xml.Schema;
+using Newtonsoft.Json.Linq;
 
 namespace Bank_365.ATM
 {
@@ -28,16 +30,40 @@ namespace Bank_365.ATM
 
     public static void Main(string[] args)
     {
-      AtmContext atm = new AtmContext();
-      
+      // Tests.
+      //Tester test1 = new Tester(1);
+      //Tester test100 = new Tester(100);
 
-      while (true)
-      {
-        // atm.Initialize();
-        // тд тп
+      //Console.WriteLine(test1);
+      //Console.WriteLine(test100);
 
-        File.WriteAllText(atm._dictPath, JsonConvert.SerializeObject(DataBase.Users));
-      }
+      //Console.WriteLine(JsonConvert.SerializeObject(test1));
+      //string serialized100 = JsonConvert.SerializeObject(test100);
+      //System.Console.WriteLine(serialized100);
+
+      //test1 = JsonConvert.DeserializeObject<Tester>(serialized100);
+
+
+      //Console.WriteLine(JsonConvert.DeserializeObject<Tester>(serialized100));
+      //Console.WriteLine(test1);
+
+      //Dictionary<string, string> dic = new Dictionary<string, string>();
+      //dic.Add("key1", "value1");
+      //dic.Add("key2", "value2");
+
+      //Console.WriteLine(JsonConvert.SerializeObject(dic));
+
+
+
+      //AtmContext atm = new AtmContext();
+
+      //while (true)
+      //{
+      //  // atm.Initialize();
+      //  // тд тп
+
+      //  File.WriteAllText(atm._dictPath, JsonConvert.SerializeObject(DataBase.Users));
+      //}
     }
 
     public void Initialize()

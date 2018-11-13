@@ -48,6 +48,7 @@
   <ItemGroup>
     <Compile Include="ATM\AtmContext.cs" />
     <Compile Include="ATM\DataBase.cs" />
+    <Compile Include="ATM\Tester.cs" />
     <Compile Include="ATM\Transactions\CreditTransaction.cs" />
     <Compile Include="ATM\Transactions\SendTransaction.cs" />
     <Compile Include="ATM\Transactions\Transaction.cs" />

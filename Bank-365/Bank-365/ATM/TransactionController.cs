@@ -47,7 +47,7 @@ namespace Bank_365.ATM
 
     public void CreateNewTransaction(string user, int amount)
     {
-      _transactions.Add(new GetTransaction(user, amount));
+      //_transactions.Add(new GetTransaction(user, amount));
     }
 
 
