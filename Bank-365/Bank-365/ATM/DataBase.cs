@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,7 +14,7 @@ namespace Bank_365.ATM
 
     private static Dictionary<string, UserProxy> _users;
     
-    private static XmlDocument usersData;
+    //private static Dictionary<string, UserProxy> usersData;
 
     public static Dictionary<string, UserProxy> Users
     {
@@ -22,15 +23,17 @@ namespace Bank_365.ATM
 
     public static void CreateDict(string path)
     {
-      usersData = new XmlDocument();
-      usersData.Load(path);
 
-      _users = new Dictionary<string, UserProxy>();
+      _users = JsonConvert.DeserializeObject<Dictionary<string, UserProxy>>(File.ReadAllText(path));
 
-      foreach (XmlNode node in usersData.DocumentElement.ChildNodes)
-      {
-        _users.Add(node.Name, new UserProxy(node.Name, node.Attributes["password"].InnerText));
-      }
+      //usersData = JsonConvert.DeserializeObject<Dictionary<string, UserProxy>>(File.ReadAllText(path));
+
+      //_users = new Dictionary<string, UserProxy>();
+
+      //foreach (KeyValuePair<string, UserProxy> user in usersData)
+      //{
+      //  _users.Add(user.Key, user.Value);
+      //}
     }
   }
 }

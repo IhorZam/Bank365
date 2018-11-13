@@ -1,6 +1,9 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
+using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Xml;
@@ -14,7 +17,7 @@ namespace Bank_365.ATM
 
     private TransactionController _transactionController;
 
-    private string _dictPath = "C:\\Users\\admin\\Dropbox\\CPP\\Bank365-master\\Bank-365\\Bank-365\\DictInfo.xml";
+    private string _dictPath = "C:\\Users\\admin\\Dropbox\\CPP\\Bank365-master\\Bank-365\\Bank-365\\DictInfo.txt";
     
 
     public UserProxy CurrentUser
@@ -25,8 +28,16 @@ namespace Bank_365.ATM
 
     public static void Main(string[] args)
     {
-      //AtmContext atm = new AtmContext();
-      //atm.Initialize();
+      AtmContext atm = new AtmContext();
+      
+
+      while (true)
+      {
+        // atm.Initialize();
+        // тд тп
+
+        File.WriteAllText(atm._dictPath, JsonConvert.SerializeObject(DataBase.Users));
+      }
     }
 
     public void Initialize()
@@ -40,11 +51,11 @@ namespace Bank_365.ATM
       string inputCardPassword = null;
     // XmlNode currentCard = null;
 
-    CardNumberRequest:
-      Console.WriteLine("Type in your card number: ");
-      inputCardNumber = Console.ReadLine();
-      while (!ValidateInputCardNumber(inputCardNumber))
-        inputCardNumber = Console.ReadLine();
+    //CardNumberRequest:
+    //  Console.WriteLine("Type in your card number: ");
+    //  inputCardNumber = Console.ReadLine();
+    //  while (!ValidateInputCardNumber(inputCardNumber))
+    //    inputCardNumber = Console.ReadLine();
 
 
       //if (_users.ContainsKey(inputCardNumber))
@@ -65,11 +76,11 @@ namespace Bank_365.ATM
       }
       */
 
-      if (CurrentUser == null)
-      {
-        Console.WriteLine("Wrong card number. Try again.");
-        goto CardNumberRequest;
-      }
+      //if (CurrentUser == null)
+      //{
+      //  Console.WriteLine("Wrong card number. Try again.");
+      //  goto CardNumberRequest;
+      //}
 
     /*
     if (currentCard.Attributes["blocked"].InnerText == "1")
@@ -81,12 +92,12 @@ namespace Bank_365.ATM
     }
     */
 
-    PasswordRequest:
-      int attempts = 3;
-      Console.WriteLine("Type in your card password: ");
-      inputCardPassword = Console.ReadLine();
-      while (!ValidateInputCardPassword(inputCardPassword))
-        inputCardPassword = Console.ReadLine();
+    //PasswordRequest:
+    //  int attempts = 3;
+    //  Console.WriteLine("Type in your card password: ");
+    //  inputCardPassword = Console.ReadLine();
+    //  while (!ValidateInputCardPassword(inputCardPassword))
+    //    inputCardPassword = Console.ReadLine();
 
 
       /*if (inputCardPassword != currentCard.Attributes["cardPassword"].InnerText)
