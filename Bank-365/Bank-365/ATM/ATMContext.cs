@@ -3,13 +3,17 @@ using System;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Data;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Net.Mime;
 using System.Runtime.CompilerServices;
+using System.Security.Principal;
 using System.Xml;
 using System.Xml.Schema;
 using Newtonsoft.Json.Linq;
+using Console = System.Console;
 
 namespace Bank_365.ATM
 {
@@ -19,8 +23,8 @@ namespace Bank_365.ATM
 
     private TransactionController _transactionController;
 
-    private string _dictPath = "C:\\Users\\admin\\Dropbox\\CPP\\Bank365-master\\Bank-365\\Bank-365\\DictInfo.txt";
-    
+    private static string _dictPath = "DataBase.txt";
+
 
     public UserProxy CurrentUser
     {
@@ -55,52 +59,144 @@ namespace Bank_365.ATM
 
 
 
-      //AtmContext atm = new AtmContext();
+      AtmContext atm = new AtmContext();
 
-      //while (true)
-      //{
-      //  // atm.Initialize();
-      //  // тд тп
+      DevMenu();
 
-      //  File.WriteAllText(atm._dictPath, JsonConvert.SerializeObject(DataBase.Users));
-      //}
+      while (true)
+      {
+        bool loggedIn = false;
+        atm.Initialize();
+
+        while (!loggedIn)
+          loggedIn = atm.LoginMenu();
+
+        atm.MainMenu();
+
+
+        UpdateDatabaseFile();        
+      }
+    }
+
+    private void MainMenu()
+    {
+      Console.ReadLine(); // pause
+    }
+
+    private static void UpdateDatabaseFile()
+    {
+      File.WriteAllText(_dictPath, JsonConvert.SerializeObject(DataBase.Users));
+    }
+
+    private static void DevMenu()
+    {
+      while (true)
+      {
+        Console.WriteLine("What do you want to do?");
+        Console.WriteLine("0 - Skip and continue");
+        Console.WriteLine("1 - Add new ATM User");
+        Console.WriteLine("2 - Delete DataBase file");
+        Console.WriteLine("9 - Exit");
+        ConsoleKeyInfo choice = Console.ReadKey(true);
+        switch (choice.KeyChar)
+        {
+          case '0':
+            return;
+          case '1':
+            AddNewATMUser();
+            break;
+          case '2':
+            DataBase.DeleteDict(_dictPath);
+            break;
+          case '9':
+            Environment.Exit(0);
+            break;
+          default:
+            return;
+        }
+      }      
+    }
+
+    private static void AddNewATMUser()
+    {
+      string cardNumber = null;
+      string cardPassword = null;
+      Console.WriteLine("Creating new User...");
+      Console.WriteLine("Write your card number: ");
+      while (!ValidateInputCardNumber(cardNumber))
+        cardNumber = Console.ReadLine();
+      Console.WriteLine("Write your password: ");
+      while (!ValidateInputCardPassword(cardPassword))
+        cardPassword = Console.ReadLine();
+      DataBase.AddUser(cardNumber, cardPassword);
+      Console.WriteLine("User created!");
+      UpdateDatabaseFile();
+    }
+
+    private bool LoginMenu()
+    {
+      Console.WriteLine("Logging in...");
+
+      string inputCardNumber = null;
+      string inputCardPassword = null;
+
+      while (true)
+      {
+        Console.WriteLine("Type in your card number: ");
+        while (!ValidateInputCardNumber(inputCardNumber))
+          inputCardNumber = Console.ReadLine();
+
+        if (DataBase.Users.ContainsKey(inputCardNumber))
+          CurrentUser = DataBase.Users[inputCardNumber];
+
+        if (CurrentUser == null)
+        {
+          Console.WriteLine("Card number doesn't exist. Try again.");
+          inputCardNumber = null;
+          continue;
+        }
+
+        if (CurrentUser.GetBlockedStatus())
+        {
+          Console.WriteLine("This card is blocked.");
+          inputCardNumber = null;
+          continue;
+        }
+
+        int attempts = 3;
+        for (int i = 0; i < attempts; i++)
+        {
+          Console.WriteLine("Type in your card password: ");
+          while (!ValidateInputCardPassword(inputCardPassword))
+            inputCardPassword = Console.ReadLine();
+
+          if (!DataBase.ValidateUser(CurrentUser, inputCardPassword))
+          {
+            if (--attempts == 0)
+            {
+              DataBase.BlockUser(CurrentUser);
+              Console.WriteLine("Wrong password. Your card is blocked.");
+              return false;
+            }
+
+            Console.WriteLine("Wrong password." + attempts + "attempts left.");
+            inputCardPassword = null;
+          }
+        }
+        Console.WriteLine("You have logged in. Welcome.");
+        return true;
+      }
     }
 
     public void Initialize()
     {
-     
+
       DataBase.CreateDict(_dictPath);
 
       //-------------------------------------------
 
-      string inputCardNumber = null;
-      string inputCardPassword = null;
-    // XmlNode currentCard = null;
 
-    //CardNumberRequest:
-    //  Console.WriteLine("Type in your card number: ");
-    //  inputCardNumber = Console.ReadLine();
-    //  while (!ValidateInputCardNumber(inputCardNumber))
-    //    inputCardNumber = Console.ReadLine();
-
-
-      //if (_users.ContainsKey(inputCardNumber))
-      //  CurrentUser = _users[inputCardNumber];
-      /*
-      foreach (XmlNode node in usersData.DocumentElement.ChildNodes)
-      {
-          if (inputCardNumber == node.Name)
-              currentCard = node;
-      }
-      */
-
-      /*
-      if (currentCard == null)
-      {
-          Console.WriteLine("Wrong card number. Try again.");
-          goto CardNumberRequest;
-      }
-      */
+      
 
       //if (CurrentUser == null)
       //{
@@ -108,22 +204,18 @@ namespace Bank_365.ATM
       //  goto CardNumberRequest;
       //}
 
-    /*
-    if (currentCard.Attributes["blocked"].InnerText == "1")
-    {
-        Console.WriteLine("Card is blocked.");
-        currentCard = null;
-        inputCardNumber = null;
-        goto CardNumberRequest;
-    }
-    */
+      /*
+      if (currentCard.Attributes["blocked"].InnerText == "1")
+      {
+          Console.WriteLine("Card is blocked.");
+          currentCard = null;
+          inputCardNumber = null;
+          goto CardNumberRequest;
+      }
+      */
 
-    //PasswordRequest:
-    //  int attempts = 3;
-    //  Console.WriteLine("Type in your card password: ");
-    //  inputCardPassword = Console.ReadLine();
-    //  while (!ValidateInputCardPassword(inputCardPassword))
-    //    inputCardPassword = Console.ReadLine();
+      //PasswordRequest:
+
 
 
       /*if (inputCardPassword != currentCard.Attributes["cardPassword"].InnerText)
@@ -144,21 +236,6 @@ namespace Bank_365.ATM
           goto PasswordRequest;
       }*/
 
-      //if (!CurrentUser.ValidateUser(inputCardPassword))
-      //{
-      //  /*
-      //  if (--attempts == 0)
-      //  {
-      //      CurrentUser.BlockUser();
-      //      Console.WriteLine("Wrong password. Your card is blocked.");
-      //      goto CardNumberRequest;
-      //  }
-      //  */
-
-      //  Console.WriteLine("Wrong password." + attempts + "attempts left.");
-      //  goto PasswordRequest;
-      //}
-
       return;
     }
 
@@ -172,8 +249,11 @@ namespace Bank_365.ATM
     }
     */
 
-    private bool ValidateInputCardPassword(string inputCardPassword)
+    private static bool ValidateInputCardPassword(string inputCardPassword)
     {
+      if (inputCardPassword == null)
+        return false;
+
       if (inputCardPassword.Length != 4)
       {
         Console.WriteLine("Invalid length. Try again.");
@@ -189,9 +269,13 @@ namespace Bank_365.ATM
       return true;
     }
 
-    private bool ValidateInputCardNumber(string inputCardNumber)
+    private static bool ValidateInputCardNumber(string inputCardNumber)
     {
-      inputCardNumber.Replace(@"\s+", "");
+      if (inputCardNumber == null)
+        return false;
+
+      inputCardNumber.Replace(" ", "");
+      inputCardNumber.Replace("\t", "");
       if (inputCardNumber.Length != 16)
       {
         Console.WriteLine("Invalid length. Try again.");

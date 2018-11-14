@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using Bank_365.ATM.Transactions;
+using Newtonsoft.Json;
 
 namespace Bank_365.ATM
 {
+  [JsonObject(MemberSerialization.Fields)]
   public class UserProxy
   {
     private AtmUser _user;
@@ -29,6 +31,27 @@ namespace Bank_365.ATM
       _user.SetCreditLimit(limit);
     }
 
+    public string GetPassword()
+    {
+      return _user.GetPassword();
+    }
+
+    public string GetCardNumber()
+    {
+      return _user.GetCardNumber();
+    }
+
+    public void SetBlockedStatus(bool blocked)
+    {
+      _user.SetBlockedStatus(blocked);
+    }
+
+    public bool GetBlockedStatus()
+    {
+      return _user.GetBlockedStatus();
+    }
+
+    [JsonObject(MemberSerialization.Fields)]
     public class AtmUser
     {
       private string _cardNumber;
@@ -38,6 +61,8 @@ namespace Bank_365.ATM
       private double _creditLimit;
 
       private double _money;
+
+      private bool _blocked = false;
 
       public double CreditLimit => _creditLimit;
 
@@ -60,12 +85,30 @@ namespace Bank_365.ATM
         return false;
       }
 
-
       public void SetCreditLimit(double newLimit)
       {
         _creditLimit = newLimit;
       }
-      
+
+      internal string GetPassword()
+      {
+        return _cardPassword;
+      }
+
+      internal string GetCardNumber()
+      {
+        return _cardNumber;
+      }
+
+      internal void SetBlockedStatus(bool blocked)
+      {
+        _blocked = blocked;
+      }
+
+      internal bool GetBlockedStatus()
+      {
+        return _blocked;
+      }
     }
 
     public struct CreditInfo
