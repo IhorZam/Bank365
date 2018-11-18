@@ -1,0 +1,10 @@
+D:\GitHub Repositories\Bank365\Bank-365\Bank-365\bin\Release\Bank-365.exe.config
+D:\GitHub Repositories\Bank365\Bank-365\Bank-365\bin\Release\Bank-365.exe
+D:\GitHub Repositories\Bank365\Bank-365\Bank-365\bin\Release\Bank-365.pdb
+D:\GitHub Repositories\Bank365\Bank-365\Bank-365\bin\Release\Newtonsoft.Json.dll
+D:\GitHub Repositories\Bank365\Bank-365\Bank-365\bin\Release\Newtonsoft.Json.xml
+D:\GitHub Repositories\Bank365\Bank-365\Bank-365\obj\Release\Bank-365.csproj.CoreCompileInputs.cache
+D:\GitHub Repositories\Bank365\Bank-365\Bank-365\obj\Release\Bank-365.csproj.CopyComplete
+D:\GitHub Repositories\Bank365\Bank-365\Bank-365\obj\Release\Bank-365.exe
+D:\GitHub Repositories\Bank365\Bank-365\Bank-365\obj\Release\Bank-365.pdb
+D:\GitHub Repositories\Bank365\Bank-365\Bank-365\obj\Release\Bank-365.csprojAssemblyReference.cache

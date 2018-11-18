@@ -150,11 +150,13 @@ namespace Bank_365.ATM
     internal string GetUserInfo()
     {
       string info = "";
+      info += "----------------------------------" + "\n";
       info += "Card number: " + GetCardNumber() + "\n";
       info += "Password: " + GetPassword() + "\n";
       info += "Money: " + GetMoneyAmount() + "\n";
-      info += "Is blocked: " + GetBlockedStatus() + "\n"; s
+      info += "Is blocked: " + GetBlockedStatus() + "\n";
       info += "Credit limit: " + CreditLimit() + "\n";
+      info += "----------------------------------";
       return info;
     }
   }

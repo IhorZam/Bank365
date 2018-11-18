@@ -25,8 +25,18 @@ namespace Bank_365.ATM
 
     public static void CreateDict(string path)
     {
+      string dataBaseString = "";
 
-      _users = JsonConvert.DeserializeObject<Dictionary<string, UserProxy>>(File.ReadAllText(path));
+      try
+      {
+        dataBaseString = File.ReadAllText(path);
+      }
+      catch (FileNotFoundException e)
+      {
+        File.WriteAllText(path, JsonConvert.SerializeObject(Users));
+      }
+
+      _users = JsonConvert.DeserializeObject<Dictionary<string, UserProxy>>(dataBaseString);
 
       //usersData = JsonConvert.DeserializeObject<Dictionary<string, UserProxy>>(File.ReadAllText(path));
 
@@ -41,6 +51,7 @@ namespace Bank_365.ATM
     public static void DeleteDict(string path)
     {
       File.Delete(path);
+      _users.Clear();
     }
 
     public static void AddUser(string cardNumber, string password)
