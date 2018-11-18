@@ -10,11 +10,16 @@ namespace Bank_365.ATM
   {
     private AtmUser _user;
 
+    public override string ToString()
+    {
+      return GetUserInfo();
+    }
+
     public double CreditLimit()
     {
       return _user.CreditLimit;
     }
-    
+
     public UserProxy(string cardNumber, string cardPassword)
     {
       _user = new AtmUser(cardNumber, cardPassword);
@@ -24,6 +29,11 @@ namespace Bank_365.ATM
     public bool WithdrawMoney(double amount)
     {
       return _user.WithdrawMoney(amount);
+    }
+
+    public void AddMoney(double amount)
+    {
+      _user.AddMoney(amount);
     }
 
     public void SetCreditLimit(double limit)
@@ -50,6 +60,13 @@ namespace Bank_365.ATM
     {
       return _user.GetBlockedStatus();
     }
+
+    public double GetMoneyAmount()
+    {
+      return _user.GetMoneyAmount();
+    }
+
+
 
     [JsonObject(MemberSerialization.Fields)]
     public class AtmUser
@@ -109,16 +126,36 @@ namespace Bank_365.ATM
       {
         return _blocked;
       }
+
+      internal double GetMoneyAmount()
+      {
+        return _money;
+      }
+
+      internal void AddMoney(double amount)
+      {
+        _money += amount;
+      }
     }
 
     public struct CreditInfo
     {
       public double Amount;
+
       // Time in number of month
       public int Time;
       public double Percent;
     }
+
+    internal string GetUserInfo()
+    {
+      string info = "";
+      info += "Card number: " + GetCardNumber() + "\n";
+      info += "Password: " + GetPassword() + "\n";
+      info += "Money: " + GetMoneyAmount() + "\n";
+      info += "Is blocked: " + GetBlockedStatus() + "\n"; s
+      info += "Credit limit: " + CreditLimit() + "\n";
+      return info;
+    }
   }
-
-
 }

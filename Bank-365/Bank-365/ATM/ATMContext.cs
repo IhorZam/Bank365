@@ -95,7 +95,9 @@ namespace Bank_365.ATM
         Console.WriteLine("What do you want to do?");
         Console.WriteLine("0 - Skip and continue");
         Console.WriteLine("1 - Add new ATM User");
-        Console.WriteLine("2 - Delete DataBase file");
+        Console.WriteLine("2 - Add money to ATM User");
+        Console.WriteLine("3 - View users info");
+        Console.WriteLine("4 - Delete DataBase file");
         Console.WriteLine("9 - Exit");
         ConsoleKeyInfo choice = Console.ReadKey(true);
         switch (choice.KeyChar)
@@ -106,6 +108,12 @@ namespace Bank_365.ATM
             AddNewATMUser();
             break;
           case '2':
+            AddMoneyToATMUser();
+            break;
+          case '3':
+            ViewUserInfo();
+            break;
+          case '4':
             DataBase.DeleteDict(_dictPath);
             break;
           case '9':
@@ -114,6 +122,97 @@ namespace Bank_365.ATM
           default:
             return;
         }
+      }      
+    }
+
+    private static void ViewUserInfo()
+    {
+      if (DataBase.Users.Count != 0)
+      {
+        Console.WriteLine("List of existing cards: ");
+        int i = 1;
+        foreach (var user in DataBase.Users)
+        {
+          Console.WriteLine(i + ". " + user.Value.GetCardNumber());
+        }
+        while (true)
+        {
+          Console.WriteLine("Choose card: ");
+          int choice;
+          if (int.TryParse(Console.ReadLine(), out choice))
+          {
+            if (choice == 0)
+              return;
+            if (choice <= DataBase.Users.Count)
+            {
+              Console.WriteLine(DataBase.Users.ElementAt(choice-1).Value.GetUserInfo());
+            }
+          }
+          else
+          {
+            Console.WriteLine("Not an integer. Try again. (0 to cancel)");
+            continue;
+          }
+        }
+      }
+      else
+      {
+        Console.WriteLine("There are no existing users yet.");
+        return;
+      }
+    }
+
+    private static void AddMoneyToATMUser()
+    {
+      if (DataBase.Users.Count != 0)
+      {
+        Console.WriteLine("List of existing cards: ");
+        int i = 1;
+        foreach (var user in DataBase.Users)
+        {
+          Console.WriteLine(i + ". " + user.Value.GetCardNumber());
+        }        
+        while (true)
+        {
+          Console.WriteLine("Choose card. (0 to cancel)");
+          int choice;
+          if (int.TryParse(Console.ReadLine(), out choice))
+          {
+            if (choice == 0)
+              return;
+            if (choice <= DataBase.Users.Count)
+            {
+              while (true)
+              {
+                Console.WriteLine("Write money amount: ");
+                double amount = 0;
+                if (double.TryParse(Console.ReadLine(), out amount))
+                {
+                  if (amount == 0)
+                    return;
+                  DataBase.Users.ElementAt(choice - 1).Value.AddMoney(amount);
+                  UpdateDatabaseFile();
+                  return;
+                }
+                else
+                {
+                  Console.WriteLine("Not a number. Try again. (0 to cancel");
+                  continue;
+                }
+              }              
+            }
+          }
+          else
+          {
+            Console.WriteLine("Not an integer. Try again.");
+            continue;
+          }
+        }
+      }
+      else
+      {
+        Console.WriteLine("There are no existing users yet.");
+        return;
       }      
     }
 
