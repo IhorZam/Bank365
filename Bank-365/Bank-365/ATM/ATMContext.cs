@@ -63,15 +63,20 @@ namespace Bank_365.ATM
       }      
     }
 
+    public void Initialize()
+    {
+      DataBase.CreateDict(_dictPath);
+
+      return;
+    }
+
+    private static void UpdateDatabaseFile()
+    {
+      File.WriteAllText(_dictPath, JsonConvert.SerializeObject(DataBase.Users));
+    }
+
     private void MainMenu()
     {
-      /*
-      CurrentUser = null;
-      Console.WriteLine("In development.");
-      Console.WriteLine("(Press any key to continue)");
-      Console.ReadKey(true);
-      return;
-      */
       while (true)
       {
         if (!_loggedIn)
@@ -251,156 +256,6 @@ namespace Bank_365.ATM
       Console.ReadKey(true);
     }
 
-    private static void UpdateDatabaseFile()
-    {
-      File.WriteAllText(_dictPath, JsonConvert.SerializeObject(DataBase.Users));
-    }
-
-    private static void DevMenu()
-    {
-      while (true)
-      {
-        Console.WriteLine("Developer menu.");
-        Console.WriteLine("What do you want to do?");
-        Console.WriteLine("0 - Skip and continue");
-        Console.WriteLine("1 - Add new ATM User");
-        Console.WriteLine("2 - Add money to ATM User");
-        Console.WriteLine("3 - View users info");
-        Console.WriteLine("4 - Clear DataBase file");
-        Console.WriteLine("9 - Exit");
-        ConsoleKeyInfo choice = Console.ReadKey(true);
-        switch (choice.KeyChar)
-        {
-          case '0':
-            return;
-          case '1':
-            AddNewATMUser();
-            break;
-          case '2':
-            AddMoneyToATMUser();
-            break;
-          case '3':
-            ViewUsersInfo();
-            break;
-          case '4':
-            DataBase.ClearDict(_dictPath);            
-            break;
-          case '9':
-            Environment.Exit(0);
-            break;
-          default:
-            continue;
-        }
-      }      
-    }
-
-    private static void ViewUsersInfo()
-    {
-      if (DataBase.Users.Count != 0)
-      {
-        Console.WriteLine("List of existing cards: ");
-        int i = 1;
-        foreach (var user in DataBase.Users)
-        {
-          Console.WriteLine(i + ". " + user.Value.GetCardNumber());
-        }
-        while (true)
-        {
-          Console.WriteLine("Choose card. (0 to cancel)");
-          int choice;
-          if (int.TryParse(Console.ReadLine(), out choice))
-          {
-            if (choice == 0)
-              return;
-            if (choice <= DataBase.Users.Count)
-            {
-              Console.WriteLine(DataBase.Users.ElementAt(choice-1).Value.GetUserInfo());
-            }
-          }
-          else
-          {
-            Console.WriteLine("Not an integer. Try again. (0 to cancel)");
-            continue;
-          }
-        }
-      }
-      else
-      {
-        Console.WriteLine("There are no existing users yet.");
-        return;
-      }
-    }
-
-    private static void AddMoneyToATMUser()
-    {
-      if (DataBase.Users.Count != 0)
-      {
-        Console.WriteLine("List of existing cards: ");
-        int i = 1;
-        foreach (var user in DataBase.Users)
-        {
-          Console.WriteLine(i + ". " + user.Value.GetCardNumber());
-        }        
-        while (true)
-        {
-          Console.WriteLine("Choose card. (0 to cancel)");
-          int choice;
-          if (int.TryParse(Console.ReadLine(), out choice))
-          {
-            if (choice == 0)
-              return;
-            if (choice <= DataBase.Users.Count)
-            {
-              while (true)
-              {
-                Console.WriteLine("Write money amount: ");
-                double amount = 0;
-                if (double.TryParse(Console.ReadLine(), out amount))
-                {
-                  if (amount == 0)
-                    return;
-                  DataBase.Users.ElementAt(choice - 1).Value.AddMoney(amount);
-                  UpdateDatabaseFile();
-                  return;
-                }
-                else
-                {
-                  Console.WriteLine("Not a number. Try again. (0 to cancel");
-                  continue;
-                }
-              }              
-            }
-          }
-          else
-          {
-            Console.WriteLine("Not an integer. Try again.");
-            continue;
-          }
-        }
-      }
-      else
-      {
-        Console.WriteLine("There are no existing users yet.");
-        return;
-      }      
-    }
-
-    private static void AddNewATMUser()
-    {
-      string cardNumber = null;
-      string cardPassword = null;
-      Console.WriteLine("Creating new User...");
-      Console.WriteLine("Write your card number: ");
-      while (!ValidateInputCardNumber(cardNumber))
-        cardNumber = Console.ReadLine();
-      Console.WriteLine("Write your password: ");
-      while (!ValidateInputCardPassword(cardPassword))
-        cardPassword = Console.ReadLine();
-      DataBase.AddUser(cardNumber, cardPassword);
-      Console.WriteLine("User created!");
-      UpdateDatabaseFile();
-    }
-
     private bool LoginMenu()
     {
       Console.WriteLine("Login menu.");
@@ -462,13 +317,6 @@ namespace Bank_365.ATM
       }
     }
 
-    public void Initialize()
-    {
-      DataBase.CreateDict(_dictPath);
-
-      return;
-    }
-
     private static bool ValidateInputCardPassword(string inputCardPassword)
     {
       if (inputCardPassword == null)
@@ -510,5 +358,160 @@ namespace Bank_365.ATM
 
       return true;
     }
+
+    #region DevMethods
+
+    private static void DevMenu()
+    {
+      while (true)
+      {
+        Console.WriteLine("Developer menu.");
+        Console.WriteLine("What do you want to do?");
+        Console.WriteLine("0 - Skip and continue");
+        Console.WriteLine("1 - Add new ATM User");
+        Console.WriteLine("2 - Add money to ATM User");
+        Console.WriteLine("3 - View users info");
+        Console.WriteLine("4 - Clear DataBase file");
+        Console.WriteLine("9 - Exit");
+        ConsoleKeyInfo choice = Console.ReadKey(true);
+        switch (choice.KeyChar)
+        {
+          case '0':
+            return;
+          case '1':
+            AddNewATMUser();
+            break;
+          case '2':
+            AddMoneyToATMUser();
+            break;
+          case '3':
+            ViewUsersInfo();
+            break;
+          case '4':
+            ClearDataBaseFile();
+            break;
+          case '9':
+            Environment.Exit(0);
+            break;
+          default:
+            continue;
+        }
+      }
+    }
+
+    private static void AddMoneyToATMUser()
+    {
+      if (DataBase.Users.Count != 0)
+      {
+        Console.WriteLine("List of existing cards: ");
+        int i = 1;
+        foreach (var user in DataBase.Users)
+        {
+          Console.WriteLine(i + ". " + user.Value.GetCardNumber());
+        }
+        while (true)
+        {
+          Console.WriteLine("Choose card. (0 to cancel)");
+          int choice;
+          if (int.TryParse(Console.ReadLine(), out choice))
+          {
+            if (choice == 0)
+              return;
+            if (choice <= DataBase.Users.Count)
+            {
+              while (true)
+              {
+                Console.WriteLine("Write money amount: ");
+                double amount = 0;
+                if (double.TryParse(Console.ReadLine(), out amount))
+                {
+                  if (amount == 0)
+                    return;
+                  DataBase.Users.ElementAt(choice - 1).Value.AddMoney(amount);
+                  UpdateDatabaseFile();
+                  return;
+                }
+                else
+                {
+                  Console.WriteLine("Not a number. Try again. (0 to cancel");
+                  continue;
+                }
+              }
+            }
+          }
+          else
+          {
+            Console.WriteLine("Not an integer. Try again.");
+            continue;
+          }
+        }
+      }
+      else
+      {
+        Console.WriteLine("There are no existing users yet.");
+        return;
+      }
+    }
+
+    private static void AddNewATMUser()
+    {
+      string cardNumber = null;
+      string cardPassword = null;
+      Console.WriteLine("Creating new User...");
+      Console.WriteLine("Write your card number: ");
+      while (!ValidateInputCardNumber(cardNumber))
+        cardNumber = Console.ReadLine();
+      Console.WriteLine("Write your password: ");
+      while (!ValidateInputCardPassword(cardPassword))
+        cardPassword = Console.ReadLine();
+      DataBase.AddUser(cardNumber, cardPassword);
+      Console.WriteLine("User created!");
+      UpdateDatabaseFile();
+    }
+
+    private static void ViewUsersInfo()
+    {
+      if (DataBase.Users.Count != 0)
+      {
+        Console.WriteLine("List of existing cards: ");
+        int i = 1;
+        foreach (var user in DataBase.Users)
+        {
+          Console.WriteLine(i + ". " + user.Value.GetCardNumber());
+        }
+        while (true)
+        {
+          Console.WriteLine("Choose card. (0 to cancel)");
+          int choice;
+          if (int.TryParse(Console.ReadLine(), out choice))
+          {
+            if (choice == 0)
+              return;
+            if (choice <= DataBase.Users.Count)
+            {
+              Console.WriteLine(DataBase.Users.ElementAt(choice - 1).Value.GetUserInfo());
+            }
+          }
+          else
+          {
+            Console.WriteLine("Not an integer. Try again. (0 to cancel)");
+            continue;
+          }
+        }
+      }
+      else
+      {
+        Console.WriteLine("There are no existing users yet.");
+        return;
+      }
+    }
+
+    private static void ClearDataBaseFile()
+    {
+      DataBase.ClearDict(_dictPath);
+    }
+
+    #endregion
+
   }
 }
