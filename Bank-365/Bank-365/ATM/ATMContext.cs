@@ -1,26 +1,15 @@
 ﻿using Newtonsoft.Json;
 using System;
-using System.CodeDom.Compiler;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Net.Mime;
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Security.Principal;
-using System.Xml;
-using System.Xml.Schema;
-using Bank_365.ATM.Transactions;
-using Newtonsoft.Json.Linq;
+using System.Threading;
 using Console = System.Console;
 
 namespace Bank_365.ATM
 {
   public class AtmContext
   {
+
     private UserProxy _currentUser = null;
 
     private bool _loggedIn = false;
@@ -37,9 +26,11 @@ namespace Bank_365.ATM
     }
 
     public static void Main(string[] args)
-    {      
-
+    {
+      
       AtmContext atm = new AtmContext();
+      Thread TCThread = atm._transactionController.thread;
+      TCThread.Start();
 
       while (true)
       {
@@ -54,20 +45,22 @@ namespace Bank_365.ATM
             atm._loggedIn = atm.LoginMenu();
 
           if (atm.CurrentUser == null)
+          {
             break;
-
-          atm.MainMenu();
+          }
+          else          
+          {
+            atm.MainMenu();
+          }
 
           UpdateDatabaseFile();
         }
-      }      
+      }
     }
 
     public void Initialize()
     {
       DataBase.CreateDict(_dictPath);
-
-      return;
     }
 
     private static void UpdateDatabaseFile()
@@ -94,7 +87,8 @@ namespace Bank_365.ATM
         switch (choice.KeyChar)
         {
           case '0':
-            continue;
+            _loggedIn = false;
+            return;
           case '1':
             DisplayAmountOfMoney();
             RecheckPassword();
@@ -191,24 +185,14 @@ namespace Bank_365.ATM
             continue;          
           break;
         }
-        catch (Exception e)
+        catch (Exception)
         {
           Console.WriteLine("Wrong input. Try again.");
           continue;
         }
       }
 
-      Transaction transaction = new SendTransaction(CurrentUser.GetCardNumber(), amount, receiver);
-      _transactionController.CreateNewTransaction(CurrentUser.GetCardNumber(), amount, receiver);
-
-      if (transaction.Do())
-      {
-        Console.WriteLine("Transaction succeded.");
-      }
-      else
-      {
-        Console.WriteLine("Transaction failed.");
-      }
+      _transactionController.CreateNewTransaction(CurrentUser.GetCardNumber(), amount, receiver, out bool result);      
     }
 
     private void WithdrawMoney()
@@ -228,19 +212,7 @@ namespace Bank_365.ATM
           continue;
         }
       }
-
-      Transaction transaction = new GetTransaction(CurrentUser.GetCardNumber(), amount);
       _transactionController.CreateNewTransaction(CurrentUser.GetCardNumber(), amount);
-
-      if (transaction.Do())
-      {
-        GiveBanknotes(amount);
-        Console.WriteLine("Transaction succeded.");
-      }
-      else
-      {
-        Console.WriteLine("Transaction failed.");
-      }
     }
 
     private void GiveBanknotes(int amount)
@@ -250,7 +222,7 @@ namespace Bank_365.ATM
 
     private void DisplayAmountOfMoney()
     {
-      Console.Write("Current amount of money on this card:");
+      Console.Write("Current amount of money on this card: ");
       Console.WriteLine(CurrentUser.GetMoneyAmount());
       Console.WriteLine("(Press any key to continue...)");
       Console.ReadKey(true);
@@ -265,12 +237,15 @@ namespace Bank_365.ATM
 
       while (true)
       {
-        Console.WriteLine("Type in your card number: ");
+        Console.WriteLine("Type in your card number (0 to cancel): ");
         while (!ValidateInputCardNumber(inputCardNumber) && inputCardNumber != "0")
           inputCardNumber = Console.ReadLine();
 
         if (inputCardNumber == "0")
+        {
+          CurrentUser = null;
           return true;
+        }          
 
         if (DataBase.Users.ContainsKey(inputCardNumber))
           CurrentUser = DataBase.Users[inputCardNumber];
