@@ -1,1 +1,1 @@
-{"1234123412341234":{"_user":{"_cardNumber":"1234123412341234","_cardPassword":"1234","_creditLimit":0.0,"_money":0.0,"_blocked":false}}}
+{}

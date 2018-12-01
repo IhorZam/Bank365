@@ -13,6 +13,7 @@ using System.Runtime.CompilerServices;
 using System.Security.Principal;
 using System.Xml;
 using System.Xml.Schema;
+using Bank_365.ATM.Transactions;
 using Newtonsoft.Json.Linq;
 using Console = System.Console;
 
@@ -22,7 +23,9 @@ namespace Bank_365.ATM
   {
     private UserProxy _currentUser = null;
 
-    private TransactionController _transactionController;
+    private bool _loggedIn = false;
+
+    private TransactionController _transactionController = new TransactionController();
 
     private static string _dictPath = "DataBase.txt";
 
@@ -45,10 +48,10 @@ namespace Bank_365.ATM
 
         while (true)
         {
-          bool loggedIn = false;
+          atm._loggedIn = false;
 
-          while (!loggedIn)
-            loggedIn = atm.LoginMenu();
+          while (!atm._loggedIn)
+            atm._loggedIn = atm.LoginMenu();
 
           if (atm.CurrentUser == null)
             break;
@@ -62,11 +65,190 @@ namespace Bank_365.ATM
 
     private void MainMenu()
     {
+      /*
       CurrentUser = null;
       Console.WriteLine("In development.");
       Console.WriteLine("(Press any key to continue)");
       Console.ReadKey(true);
       return;
+      */
+      while (true)
+      {
+        if (!_loggedIn)
+          return;
+
+        Console.WriteLine("User menu.");
+        Console.WriteLine("What do you want to do?");
+        Console.WriteLine("0 - Exit");
+        Console.WriteLine("1 - Display amount of money");
+        Console.WriteLine("2 - Withdraw money");
+        Console.WriteLine("3 - Send money");
+        Console.WriteLine("4 - Get credit(not implemented)");
+        Console.WriteLine("5 - Pay credit(???)(not implemented)");
+        ConsoleKeyInfo choice = Console.ReadKey(true);
+        switch (choice.KeyChar)
+        {
+          case '0':
+            continue;
+          case '1':
+            DisplayAmountOfMoney();
+            RecheckPassword();
+            break;
+          case '2':
+            WithdrawMoney();
+            RecheckPassword();
+            break;
+          case '3':
+            SendMoney();
+            RecheckPassword();
+            break;
+          case '4':
+            GetCredit();
+            RecheckPassword();
+            break;
+          case '5':
+            PayCredit();
+            RecheckPassword();
+            break;
+          default:
+            continue;
+        }
+      }      
+    }
+
+    private void RecheckPassword()
+    {
+      _loggedIn = false;
+      string inputCardPassword = null;
+      int attempts = 3;
+      for (int i = 0; i < attempts; i++)
+      {
+        Console.WriteLine("Type in your card password: ");
+        while (!ValidateInputCardPassword(inputCardPassword))
+          inputCardPassword = Console.ReadLine();
+
+        if (!DataBase.ValidateUser(CurrentUser, inputCardPassword))
+        {
+          if (--attempts == 0)
+          {
+            DataBase.BlockUser(CurrentUser);
+            Console.WriteLine("Wrong password. Your card is blocked.");
+            return;
+          }
+
+          Console.WriteLine("Wrong password." + attempts + " attempts left.");
+          inputCardPassword = null;
+        }
+        else
+        {
+          _loggedIn = true;
+          return;
+        }
+      }
+    }
+
+    private void PayCredit()
+    {
+      throw new NotImplementedException();
+    }
+
+    private void GetCredit()
+    {
+      throw new NotImplementedException();
+      
+    }
+
+    private void SendMoney()
+    {
+      int amount;
+      string receiver;
+      while (true)
+      {
+        try
+        {
+          Console.WriteLine("Choose amount of money: ");
+          amount = int.Parse(Console.ReadLine());
+          break;
+        }
+        catch (Exception e)
+        {
+          Console.WriteLine("Wrong input. Try again.");
+          continue;
+        }
+      }
+      while (true)
+      {
+        try
+        {
+          Console.WriteLine("Type in card number of receiver: ");
+          receiver = Console.ReadLine();
+          if (!ValidateInputCardNumber(receiver))
+            continue;          
+          break;
+        }
+        catch (Exception e)
+        {
+          Console.WriteLine("Wrong input. Try again.");
+          continue;
+        }
+      }
+
+      Transaction transaction = new SendTransaction(CurrentUser.GetCardNumber(), amount, receiver);
+      _transactionController.CreateNewTransaction(CurrentUser.GetCardNumber(), amount, receiver);
+
+      if (transaction.Do())
+      {
+        Console.WriteLine("Transaction succeded.");
+      }
+      else
+      {
+        Console.WriteLine("Transaction failed.");
+      }
+    }
+
+    private void WithdrawMoney()
+    {      
+      int amount;
+      while (true)
+      {
+        try
+        {
+          Console.WriteLine("Choose amount of money: ");
+          amount = int.Parse(Console.ReadLine());
+          break;
+        }
+        catch (Exception e)
+        {
+          Console.WriteLine("Wrong input. Try again.");
+          continue;
+        }
+      }
+
+      Transaction transaction = new GetTransaction(CurrentUser.GetCardNumber(), amount);
+      _transactionController.CreateNewTransaction(CurrentUser.GetCardNumber(), amount);
+
+      if (transaction.Do())
+      {
+        GiveBanknotes(amount);
+        Console.WriteLine("Transaction succeded.");
+      }
+      else
+      {
+        Console.WriteLine("Transaction failed.");
+      }
+    }
+
+    private void GiveBanknotes(int amount)
+    {
+      throw new NotImplementedException();
+    }
+
+    private void DisplayAmountOfMoney()
+    {
+      Console.Write("Current amount of money on this card:");
+      Console.WriteLine(CurrentUser.GetMoneyAmount());
+      Console.WriteLine("(Press any key to continue...)");
+      Console.ReadKey(true);
     }
 
     private static void UpdateDatabaseFile()
@@ -84,7 +266,7 @@ namespace Bank_365.ATM
         Console.WriteLine("1 - Add new ATM User");
         Console.WriteLine("2 - Add money to ATM User");
         Console.WriteLine("3 - View users info");
-        Console.WriteLine("4 - Delete DataBase file");
+        Console.WriteLine("4 - Clear DataBase file");
         Console.WriteLine("9 - Exit");
         ConsoleKeyInfo choice = Console.ReadKey(true);
         switch (choice.KeyChar)
@@ -98,10 +280,10 @@ namespace Bank_365.ATM
             AddMoneyToATMUser();
             break;
           case '3':
-            ViewUserInfo();
+            ViewUsersInfo();
             break;
           case '4':
-            DataBase.DeleteDict(_dictPath);            
+            DataBase.ClearDict(_dictPath);            
             break;
           case '9':
             Environment.Exit(0);
@@ -112,7 +294,7 @@ namespace Bank_365.ATM
       }      
     }
 
-    private static void ViewUserInfo()
+    private static void ViewUsersInfo()
     {
       if (DataBase.Users.Count != 0)
       {

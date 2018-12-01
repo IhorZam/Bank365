@@ -48,10 +48,11 @@ namespace Bank_365.ATM
       //}
     }
 
-    public static void DeleteDict(string path)
+    public static void ClearDict(string path)
     {
       File.Delete(path);
       _users.Clear();
+      File.WriteAllText(path, JsonConvert.SerializeObject(Users));
     }
 
     public static void AddUser(string cardNumber, string password)

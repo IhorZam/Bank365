@@ -34,7 +34,7 @@ namespace Bank_365.ATM
     }
 
 
-    public void CreateNewTransaction(string user, int amount, UserProxy.AtmUser receiver)
+    public void CreateNewTransaction(string user, int amount, string receiver)
     {
        _transactions.Add(new SendTransaction(user, amount, receiver));
 

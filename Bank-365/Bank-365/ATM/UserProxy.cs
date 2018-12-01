@@ -98,7 +98,6 @@ namespace Bank_365.ATM
           _money -= amount;
           return true;
         }
-
         return false;
       }
 

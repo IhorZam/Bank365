@@ -19,14 +19,17 @@ namespace Bank_365.ATM.Transactions
 
     public override bool Do()
     {
-      if(DataBase.Users[_user].WithdrawMoney(_amount))
+      if (DataBase.Users[_user].WithdrawMoney(_amount))
+      {
         Console.WriteLine("Money withdrawed. Amount: " + _amount);
+        return true;
+      }        
       else
       {
         Console.WriteLine("Not enough money on card.");
         return false;
       }
-      return true;
+      
     }
 
   }
