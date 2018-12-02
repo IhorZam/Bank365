@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using Bank_365.ATM.Transactions.ServiceClasses;
 
 namespace Bank_365.ATM.Transactions
 {
@@ -12,9 +13,9 @@ namespace Bank_365.ATM.Transactions
     private string _user;
     private int _amount;
     private string _receiver;
-    private bool _result;
+    private TransactionResultData _result;
 
-    public SendTransaction(string user, int amount, string receiver, out bool result) : base(user, TransactionType.Send)
+    public SendTransaction(string user, int amount, string receiver, out TransactionResultData result) : base(user, TransactionType.Send)
     {
       _user = user;
       _amount = amount;
@@ -28,16 +29,14 @@ namespace Bank_365.ATM.Transactions
       if (DataBase.Users[_user].WithdrawMoney(_amount))
       {
         receiver.AddMoney(_amount);
-        _result = true;
+        _result = new TransactionResultData(true);
         Console.WriteLine("Money sent to " + receiver.GetCardNumber() + ". Amount: " + _amount);
+        return true;
       }
-      else
-      {
-        _result = false;
-        Console.WriteLine("Not enough money on card.");
-        return false;
-      }
-      return true;
+      _result = new TransactionResultData(false, TransactionDeniedReason.NotEnoughMoney);
+      Console.WriteLine("Not enough money on card.");
+      return false;
+
     }
   }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Bank_365.ATM.Transactions.ServiceClasses;
 
 namespace Bank_365.ATM.Transactions
 {
@@ -51,9 +52,7 @@ namespace Bank_365.ATM.Transactions
 
           return true;
         }
-
       }
-
       return false;
     }
   }

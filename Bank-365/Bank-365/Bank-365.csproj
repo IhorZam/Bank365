@@ -79,8 +79,10 @@
     <Compile Include="ATM\Transactions\GetTransaction.cs" />
     <Compile Include="ATM\Transactions\SendTransaction.cs" />
     <Compile Include="ATM\Transactions\Transaction.cs" />
-    <Compile Include="ATM\Transactions\TransactionDeniedException.cs" />
-    <Compile Include="ATM\Transactions\TransactionType.cs" />
+    <Compile Include="ATM\Transactions\ServiceClasses\TransactionDeniedException.cs" />
+    <Compile Include="ATM\Transactions\ServiceClasses\TransactionDeniedReason.cs" />
+    <Compile Include="ATM\Transactions\ServiceClasses\TransactionResultData.cs" />
+    <Compile Include="ATM\Transactions\ServiceClasses\TransactionType.cs" />
     <Compile Include="ContextWindow.cs">
       <SubType>Form</SubType>
     </Compile>

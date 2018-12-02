@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Threading;
 using Bank_365.ATM.Transactions;
+using Bank_365.ATM.Transactions.ServiceClasses;
 
 namespace Bank_365.ATM
 {
@@ -30,10 +31,6 @@ namespace Bank_365.ATM
         {
           continue;
         }
-        catch (NullReferenceException)
-        {
-          continue;
-        }
       }
     }
 
@@ -56,7 +53,7 @@ namespace Bank_365.ATM
     }
 
 
-    public void CreateNewTransaction(string user, int amount, string receiver, out bool result)
+    public void CreateNewTransaction(string user, int amount, string receiver, out TransactionResultData result)
     {
        _transactions.Add(new SendTransaction(user, amount, receiver, out result));
     }
@@ -66,9 +63,9 @@ namespace Bank_365.ATM
       _transactions.Add(new CreditTransaction(user, creditInfo));
     }
 
-    public void CreateNewTransaction(string user, int amount)
+    public void CreateNewTransaction(string user, int amount, out TransactionResultData result)
     {
-      _transactions.Add(new GetTransaction(user, amount));      
+      _transactions.Add(new GetTransaction(user, amount, out result));      
     }
   }
 }
