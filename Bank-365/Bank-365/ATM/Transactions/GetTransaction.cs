@@ -5,7 +5,6 @@ namespace Bank_365.ATM.Transactions
 {
   public class GetTransaction : Transaction
   {
-    private string _user;
     private int _amount;
     private TransactionResultData _result;
     private string _key;
@@ -19,21 +18,20 @@ namespace Bank_365.ATM.Transactions
       }
       _amount = amount;
       _key = key;
-      _user = user;
     }
 
     public override bool Do()
     {
       if (DataBase.Users[UserId].WithdrawMoney(_amount))
       {
-        _result = new TransactionResultData(true);
+        _result = new TransactionResultData(true, DateTime.Now, _amount, false);
         Console.WriteLine("Money withdrawed. Amount: " + _amount);
-        DataBase.Users[_user].AddTransaction(_key, _result);
+        DataBase.Users[UserId].AddTransaction(_key, _result);
         return true;
       }
-      _result = new TransactionResultData(false, TransactionDeniedReason.NotEnoughMoney);
+      _result = new TransactionResultData(false, DateTime.Now, _amount, false, TransactionDeniedReason.NotEnoughMoney);
       Console.WriteLine("Not enough money on card.");
-      DataBase.Users[_user].AddTransaction(_key, _result);
+      DataBase.Users[UserId].AddTransaction(_key, _result);
       return false;
 
     }

@@ -41,6 +41,12 @@ namespace Bank_365.ATM.Transactions
 
     public override bool Do()
     {
+      if (_monthLeft == _creditInfo.Time)
+      {
+        DataBase.Users[UserId].AddMoney(_creditInfo.Amount);
+        DataBase.Users[base.UserId].AddTransaction(_key + _monthLeft, new TransactionResultData(true, DateTime.Now, _creditInfo.Amount, true));
+        return true;
+      }
       int month = DateTime.Today.Month;
       if (month != _currentMonthNumeber)
       {
@@ -52,11 +58,14 @@ namespace Bank_365.ATM.Transactions
           {
             _creditPayed = true;
           }
-          DataBase.Users[base.UserId].AddTransaction(_key + _monthLeft, new TransactionResultData(true));
+          DataBase.Users[base.UserId].AddTransaction(_key + _monthLeft,
+            new TransactionResultData(true, DateTime.Now, _monthPay, false));
           return true;
         }
+        DataBase.Users[base.UserId].AddTransaction(_key + _monthLeft,
+            new TransactionResultData(false, DateTime.Now, _monthPay, false, TransactionDeniedReason.NotEnoughMoney));
+
       }
-      //DataBase.Users[base.UserId].AddTransaction(_key + _monthLeft, new TransactionResultData(false, TransactionDeniedReason.NotEnoughMoney));
       return true;
     }
   }

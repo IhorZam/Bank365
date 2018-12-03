@@ -27,12 +27,12 @@ namespace Bank_365.ATM.Transactions
       if (DataBase.Users[UserId].WithdrawMoney(_amount))
       {
         receiver.AddMoney(_amount);
-        _result = new TransactionResultData(true);
+        _result = new TransactionResultData(true, DateTime.Now, _amount, false);
         Console.WriteLine("Money sent to " + receiver.GetCardNumber() + ". Amount: " + _amount);
         DataBase.Users[UserId].AddTransaction(_key, _result);
         return true;
       }
-      _result = new TransactionResultData(false, TransactionDeniedReason.NotEnoughMoney);
+      _result = new TransactionResultData(false, DateTime.Now, _amount, false, TransactionDeniedReason.NotEnoughMoney);
       Console.WriteLine("Not enough money on card.");
       DataBase.Users[UserId].AddTransaction(_key, _result);
       return false;
