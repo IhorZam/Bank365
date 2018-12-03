@@ -3,6 +3,8 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using System.Windows.Documents;
+using System.Windows.Forms;
 using Console = System.Console;
 
 namespace Bank_365.ATM
@@ -18,6 +20,8 @@ namespace Bank_365.ATM
 
     private static string _dictPath = "DataBase.txt";
 
+    private static ContextWindow contextWindow = new ContextWindow();
+
 
     public UserProxy CurrentUser
     {
@@ -29,13 +33,18 @@ namespace Bank_365.ATM
     {
       
       AtmContext atm = new AtmContext();
-      Thread TCThread = atm._transactionController.thread;
-      TCThread.Start();
+      
+      //Thread TCThread = atm._transactionController.thread;
+      //TCThread.Start();
 
+      Thread CWThread = new Thread(RunContextWindow);
+      CWThread.Start();
+      
+            
       while (true)
       {
         atm.Initialize();
-        DevMenu();
+        DevMenu();        
 
         while (true)
         {
@@ -55,7 +64,12 @@ namespace Bank_365.ATM
 
           UpdateDatabaseFile();
         }
-      }
+      }      
+    }
+
+    private static void RunContextWindow()
+    {
+      Application.Run(contextWindow);
     }
 
     public void Initialize()
@@ -452,7 +466,7 @@ namespace Bank_365.ATM
         int i = 1;
         foreach (var user in DataBase.Users)
         {
-          Console.WriteLine(i + ". " + user.Value.GetCardNumber());
+          Console.WriteLine(i++ + ". " + user.Value.GetCardNumber());
         }
         while (true)
         {

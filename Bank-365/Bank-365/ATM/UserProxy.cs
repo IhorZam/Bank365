@@ -46,6 +46,16 @@ namespace Bank_365.ATM
       return _user.GetPassword();
     }
 
+    public int GetPasswordAttempts()
+    {
+      return _user.GetPasswordAttempts();
+    }
+
+    public void SetPasswordAttempts(int i)
+    {
+      _user.SetPasswordAttempts(i);
+    }
+
     public string GetCardNumber()
     {
       return _user.GetCardNumber();
@@ -75,11 +85,13 @@ namespace Bank_365.ATM
 
       private string _cardPassword;
 
+      private int _passwordAttempts;
+
       private double _creditLimit;
 
       private double _money;
 
-      private bool _blocked = false;
+      private bool _blocked = false;      
 
       public double CreditLimit => _creditLimit;
 
@@ -89,6 +101,7 @@ namespace Bank_365.ATM
         _cardPassword = cardPassword;
         _cardNumber = cardNumber;
         _creditLimit = 0;
+        _passwordAttempts = 3;
       }
 
       internal bool WithdrawMoney(double amount)
@@ -105,7 +118,7 @@ namespace Bank_365.ATM
       public void SetCreditLimit(double newLimit)
       {
         _creditLimit = newLimit;
-      }
+      }     
 
       internal string GetPassword()
       {
@@ -136,6 +149,16 @@ namespace Bank_365.ATM
       {
         _money += amount;
       }
+
+      internal int GetPasswordAttempts()
+      {
+        return _passwordAttempts;
+      }
+
+      internal void SetPasswordAttempts(int i)
+      {
+        _passwordAttempts = i;
+      }
     }
 
     public struct CreditInfo
@@ -153,6 +176,7 @@ namespace Bank_365.ATM
       info += "----------------------------------" + "\n";
       info += "Card number: " + GetCardNumber() + "\n";
       info += "Password: " + GetPassword() + "\n";
+      info += "Password attempts left: " + GetPasswordAttempts() + "\n";
       info += "Money: " + GetMoneyAmount() + "\n";
       info += "Is blocked: " + GetBlockedStatus() + "\n";
       info += "Credit limit: " + CreditLimit() + "\n";

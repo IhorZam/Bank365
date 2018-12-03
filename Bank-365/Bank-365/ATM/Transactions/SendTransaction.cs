@@ -11,7 +11,7 @@ namespace Bank_365.ATM.Transactions
   public class SendTransaction : Transaction
   {
     private string _user;
-    private int _amount;
+    private double _amount;
     private string _receiver;
     private TransactionResultData _result;
 
