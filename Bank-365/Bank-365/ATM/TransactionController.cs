@@ -126,19 +126,25 @@ namespace Bank_365.ATM
       }
     }    
 
-    public void CreateNewTransaction(string user, double amount, string receiver, out TransactionResultData result)
+    public string CreateNewTransaction(string user, double amount, string receiver)
     {
-       _sendTransactions.Add(new SendTransaction(user, amount, receiver, out result));
+      string key = user + amount + DataBase.Users[user].GetTransactionHistory().Count;
+      _sendTransactions.Add(new SendTransaction(user, amount, receiver, key));
+      return key;
     }
 
-    public void CreateNewTransaction(string user, UserProxy.CreditInfo creditInfo)
+    public string CreateNewTransaction(string user, UserProxy.CreditInfo creditInfo)
     {
-      _creditTransactions.Add(new CreditTransaction(user, creditInfo));
+      string key = user + creditInfo.Amount + DataBase.Users[user].GetTransactionHistory().Count;
+      _creditTransactions.Add(new CreditTransaction(user, creditInfo, key));
+      return key;
     }
 
-    public void CreateNewTransaction(string user, int amount, out TransactionResultData result)
+    public string CreateNewTransaction(string user, int amount)
     {
-      _getTransactions.Add(new GetTransaction(user, amount, out result));      
+      string key = user + amount + DataBase.Users[user].GetTransactionHistory().Count;
+      _getTransactions.Add(new GetTransaction(user, amount, key));
+      return key;
     }
   }
 }

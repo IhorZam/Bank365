@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Bank_365.ATM.Transactions.ServiceClasses;
 
 namespace Bank_365.ATM.Transactions
@@ -12,24 +8,31 @@ namespace Bank_365.ATM.Transactions
     private string _user;
     private int _amount;
     private TransactionResultData _result;
+    private string _key;
 
-    public GetTransaction(string user, int amount, out TransactionResultData result) : base(user, TransactionType.Get)
+    public GetTransaction(string user, int amount, string key) : base(user, TransactionType.Get)
     {
-      _user = user;
+
+      if (amount <= 0)
+      {
+        throw new TransactionDeniedException();
+      }
       _amount = amount;
-      result = _result;
+      _key = key;
     }
 
     public override bool Do()
     {
-      if (DataBase.Users[_user].WithdrawMoney(_amount))
+      if (DataBase.Users[UserId].WithdrawMoney(_amount))
       {
         _result = new TransactionResultData(true);
         Console.WriteLine("Money withdrawed. Amount: " + _amount);
+        DataBase.Users[_user].AddTransaction(_key, _result);
         return true;
       }
       _result = new TransactionResultData(false, TransactionDeniedReason.NotEnoughMoney);
       Console.WriteLine("Not enough money on card.");
+      DataBase.Users[_user].AddTransaction(_key, _result);
       return false;
 
     }

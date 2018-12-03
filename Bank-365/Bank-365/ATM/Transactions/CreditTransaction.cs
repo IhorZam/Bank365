@@ -21,10 +21,12 @@ namespace Bank_365.ATM.Transactions
 
     private bool _creditPayed;
 
+    private string _key;
+
     public bool CreditPayed => _creditPayed;
 
 
-    public CreditTransaction(string user, UserProxy.CreditInfo creditInfo) : base(user, TransactionType.Credit)
+    public CreditTransaction(string user, UserProxy.CreditInfo creditInfo, string key) : base(user, TransactionType.Credit)
     {
       if (DataBase.Users[user].CreditLimit() < creditInfo.Amount)
       {
@@ -34,6 +36,7 @@ namespace Bank_365.ATM.Transactions
       _amountLeft = creditInfo.Amount * creditInfo.Percent;
       _monthLeft = _creditInfo.Time;
       _monthPay = (_creditInfo.Amount * _creditInfo.Percent) / _creditInfo.Time;
+      _key = key;
     }
 
     public override bool Do()
@@ -49,10 +52,11 @@ namespace Bank_365.ATM.Transactions
           {
             _creditPayed = true;
           }
-
+          DataBase.Users[base.UserId].AddTransaction(_key + _monthLeft, new TransactionResultData(true));
           return true;
         }
       }
+      DataBase.Users[base.UserId].AddTransaction(_key + _monthLeft, new TransactionResultData(false, TransactionDeniedReason.NotEnoughMoney));
       return false;
     }
   }

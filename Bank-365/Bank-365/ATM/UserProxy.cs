@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Bank_365.ATM.Transactions;
+using Bank_365.ATM.Transactions.ServiceClasses;
 using Newtonsoft.Json;
 
 namespace Bank_365.ATM
@@ -76,6 +77,16 @@ namespace Bank_365.ATM
       return _user.GetMoneyAmount();
     }
 
+    public Dictionary<string, TransactionResultData> GetTransactionHistory()
+    {
+      return _user.History;
+    }
+
+
+    public void AddTransaction(string key, TransactionResultData data)
+    {
+      _user.AddTransactionToHistory(key, data);
+    }
 
 
     [JsonObject(MemberSerialization.Fields)]
@@ -91,9 +102,13 @@ namespace Bank_365.ATM
 
       private double _money;
 
-      private bool _blocked = false;      
+      private bool _blocked = false;
+
+      private Dictionary<string, TransactionResultData> _history;
 
       public double CreditLimit => _creditLimit;
+
+      public Dictionary<string, TransactionResultData> History => _history;
 
       public AtmUser(string cardNumber, string cardPassword)
       {
@@ -102,6 +117,7 @@ namespace Bank_365.ATM
         _cardNumber = cardNumber;
         _creditLimit = 0;
         _passwordAttempts = 3;
+        _history = new Dictionary<string, TransactionResultData>();
       }
 
       internal bool WithdrawMoney(double amount)
@@ -113,6 +129,11 @@ namespace Bank_365.ATM
         }
 
         return false;
+      }
+
+      public void AddTransactionToHistory(string number, TransactionResultData data)
+      {
+        _history[number] = data;
       }
 
       public void SetCreditLimit(double newLimit)
