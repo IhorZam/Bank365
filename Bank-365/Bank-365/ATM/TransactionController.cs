@@ -94,16 +94,7 @@ namespace Bank_365.ATM
       foreach (var transaction in _getTransactions)
       {
         transaction.Do();
-        if (transaction.Type == TransactionType.Credit)
-        {
-          CreditTransaction aux = (CreditTransaction) transaction;
-          if (aux.CreditPayed)
-            _getTransactions.Remove(transaction);
-        }
-        else
-        {
-          _getTransactions.Remove(transaction);
-        }
+        _getTransactions.Remove(transaction);
         ContextWindow.UpdateDatabaseFile();
       }
     }
@@ -113,16 +104,7 @@ namespace Bank_365.ATM
       foreach (var transaction in _sendTransactions)
       {
         transaction.Do();
-        if (transaction.Type == TransactionType.Credit)
-        {
-          CreditTransaction aux = (CreditTransaction)transaction;
-          if (aux.CreditPayed)
-            _sendTransactions.Remove(transaction);
-        }
-        else
-        {
-          _sendTransactions.Remove(transaction);
-        }
+        _sendTransactions.Remove(transaction);
         ContextWindow.UpdateDatabaseFile();
       }
     }
@@ -132,16 +114,10 @@ namespace Bank_365.ATM
       foreach (var transaction in _creditTransactions)
       {
         transaction.Do();
-        if (transaction.Type == TransactionType.Credit)
-        {
-          CreditTransaction aux = (CreditTransaction)transaction;
-          if (aux.CreditPayed)
-            _creditTransactions.Remove(transaction);
-        }
-        else
-        {
+        CreditTransaction aux = (CreditTransaction)transaction;
+        if (aux.CreditPayed)
           _creditTransactions.Remove(transaction);
-        }
+
         ContextWindow.UpdateDatabaseFile();
       }
     }
