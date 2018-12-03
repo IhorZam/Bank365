@@ -48,6 +48,10 @@ namespace Bank_365.ATM
         {
           continue;
         }
+        catch (NullReferenceException)
+        {
+          continue;
+        }
       }
     }
 
@@ -109,7 +113,7 @@ namespace Bank_365.ATM
       }
     }
 
-    public void CreateNewTransaction(string user, int amount, string receiver, out bool result)
+    public void UpdateCreditTransactions()
     {
       foreach (var transaction in _creditTransactions)
       {
@@ -120,10 +124,9 @@ namespace Bank_365.ATM
 
         ContextWindow.UpdateDatabaseFile();
       }
-    }
+    }    
 
-
-    public void CreateNewTransaction(string user, double amount, string receiver, out bool result)
+    public void CreateNewTransaction(string user, double amount, string receiver, out TransactionResultData result)
     {
        _sendTransactions.Add(new SendTransaction(user, amount, receiver, out result));
     }
@@ -135,7 +138,7 @@ namespace Bank_365.ATM
 
     public void CreateNewTransaction(string user, int amount, out TransactionResultData result)
     {
-      _transactions.Add(new GetTransaction(user, amount, out result));      
+      _getTransactions.Add(new GetTransaction(user, amount, out result));      
     }
   }
 }

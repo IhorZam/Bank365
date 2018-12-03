@@ -68,6 +68,12 @@
       this.aButton4Label = new System.Windows.Forms.Label();
       this.aLabelAtmName = new System.Windows.Forms.Label();
       this.aDisplayPanel = new System.Windows.Forms.Panel();
+      this.aAmountOfMoneyRequestPanel = new System.Windows.Forms.Panel();
+      this.aAmountOfMoneyRequestLabel = new System.Windows.Forms.Label();
+      this.aAmountOfMoneyRequestTextBox = new System.Windows.Forms.MaskedTextBox();
+      this.aReceiverCardRequestPanel = new System.Windows.Forms.Panel();
+      this.aReceiverCardNumberRequestLabel = new System.Windows.Forms.Label();
+      this.aReceiverCardNumberTextBox = new System.Windows.Forms.MaskedTextBox();
       this.aInfoLabel = new System.Windows.Forms.Label();
       this.aCardNumberPanel = new System.Windows.Forms.Panel();
       this.aCardNumberRequestLabel = new System.Windows.Forms.Label();
@@ -76,12 +82,6 @@
       this.aPasswordRequestLabel = new System.Windows.Forms.Label();
       this.aPasswordTextBox = new System.Windows.Forms.MaskedTextBox();
       this.aLabelMenuName = new System.Windows.Forms.Label();
-      this.aReceiverCardNumberTextBox = new System.Windows.Forms.MaskedTextBox();
-      this.aReceiverCardNumberRequestLabel = new System.Windows.Forms.Label();
-      this.aReceiverCardRequestPanel = new System.Windows.Forms.Panel();
-      this.aAmountOfMoneyRequestPanel = new System.Windows.Forms.Panel();
-      this.aAmountOfMoneyRequestLabel = new System.Windows.Forms.Label();
-      this.aAmountOfMoneyRequestTextBox = new System.Windows.Forms.MaskedTextBox();
       this.panel1.SuspendLayout();
       this.panel2.SuspendLayout();
       this.aInputPanel.SuspendLayout();
@@ -89,10 +89,10 @@
       this.aRightButtonsDisplayPanel.SuspendLayout();
       this.aLeftButtonsDisplayPanel.SuspendLayout();
       this.aDisplayPanel.SuspendLayout();
+      this.aAmountOfMoneyRequestPanel.SuspendLayout();
+      this.aReceiverCardRequestPanel.SuspendLayout();
       this.aCardNumberPanel.SuspendLayout();
       this.aPasswordPanel.SuspendLayout();
-      this.aReceiverCardRequestPanel.SuspendLayout();
-      this.aAmountOfMoneyRequestPanel.SuspendLayout();
       this.SuspendLayout();
       // 
       // panel1
@@ -607,6 +607,72 @@
       this.aDisplayPanel.Size = new System.Drawing.Size(686, 375);
       this.aDisplayPanel.TabIndex = 8;
       // 
+      // aAmountOfMoneyRequestPanel
+      // 
+      this.aAmountOfMoneyRequestPanel.Controls.Add(this.aAmountOfMoneyRequestLabel);
+      this.aAmountOfMoneyRequestPanel.Controls.Add(this.aAmountOfMoneyRequestTextBox);
+      this.aAmountOfMoneyRequestPanel.Enabled = false;
+      this.aAmountOfMoneyRequestPanel.Location = new System.Drawing.Point(136, 60);
+      this.aAmountOfMoneyRequestPanel.Name = "aAmountOfMoneyRequestPanel";
+      this.aAmountOfMoneyRequestPanel.Size = new System.Drawing.Size(414, 100);
+      this.aAmountOfMoneyRequestPanel.TabIndex = 13;
+      // 
+      // aAmountOfMoneyRequestLabel
+      // 
+      this.aAmountOfMoneyRequestLabel.Dock = System.Windows.Forms.DockStyle.Top;
+      this.aAmountOfMoneyRequestLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 19.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+      this.aAmountOfMoneyRequestLabel.Location = new System.Drawing.Point(0, 0);
+      this.aAmountOfMoneyRequestLabel.Name = "aAmountOfMoneyRequestLabel";
+      this.aAmountOfMoneyRequestLabel.Size = new System.Drawing.Size(414, 48);
+      this.aAmountOfMoneyRequestLabel.TabIndex = 1;
+      this.aAmountOfMoneyRequestLabel.Text = "Amount of money:";
+      this.aAmountOfMoneyRequestLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+      // 
+      // aAmountOfMoneyRequestTextBox
+      // 
+      this.aAmountOfMoneyRequestTextBox.Dock = System.Windows.Forms.DockStyle.Bottom;
+      this.aAmountOfMoneyRequestTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 22.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+      this.aAmountOfMoneyRequestTextBox.Location = new System.Drawing.Point(0, 51);
+      this.aAmountOfMoneyRequestTextBox.Name = "aAmountOfMoneyRequestTextBox";
+      this.aAmountOfMoneyRequestTextBox.ReadOnly = true;
+      this.aAmountOfMoneyRequestTextBox.Size = new System.Drawing.Size(414, 49);
+      this.aAmountOfMoneyRequestTextBox.TabIndex = 0;
+      this.aAmountOfMoneyRequestTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+      // 
+      // aReceiverCardRequestPanel
+      // 
+      this.aReceiverCardRequestPanel.Controls.Add(this.aReceiverCardNumberRequestLabel);
+      this.aReceiverCardRequestPanel.Controls.Add(this.aReceiverCardNumberTextBox);
+      this.aReceiverCardRequestPanel.Enabled = false;
+      this.aReceiverCardRequestPanel.Location = new System.Drawing.Point(136, 60);
+      this.aReceiverCardRequestPanel.Name = "aReceiverCardRequestPanel";
+      this.aReceiverCardRequestPanel.Size = new System.Drawing.Size(414, 100);
+      this.aReceiverCardRequestPanel.TabIndex = 12;
+      // 
+      // aReceiverCardNumberRequestLabel
+      // 
+      this.aReceiverCardNumberRequestLabel.Dock = System.Windows.Forms.DockStyle.Top;
+      this.aReceiverCardNumberRequestLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 19.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+      this.aReceiverCardNumberRequestLabel.Location = new System.Drawing.Point(0, 0);
+      this.aReceiverCardNumberRequestLabel.Name = "aReceiverCardNumberRequestLabel";
+      this.aReceiverCardNumberRequestLabel.Size = new System.Drawing.Size(414, 48);
+      this.aReceiverCardNumberRequestLabel.TabIndex = 1;
+      this.aReceiverCardNumberRequestLabel.Text = "Receiver card number:";
+      this.aReceiverCardNumberRequestLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+      // 
+      // aReceiverCardNumberTextBox
+      // 
+      this.aReceiverCardNumberTextBox.Dock = System.Windows.Forms.DockStyle.Bottom;
+      this.aReceiverCardNumberTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 22.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+      this.aReceiverCardNumberTextBox.Location = new System.Drawing.Point(0, 51);
+      this.aReceiverCardNumberTextBox.Mask = "0000-0000-0000-0000";
+      this.aReceiverCardNumberTextBox.Name = "aReceiverCardNumberTextBox";
+      this.aReceiverCardNumberTextBox.ReadOnly = true;
+      this.aReceiverCardNumberTextBox.Size = new System.Drawing.Size(414, 49);
+      this.aReceiverCardNumberTextBox.TabIndex = 0;
+      this.aReceiverCardNumberTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+      this.aReceiverCardNumberTextBox.TextMaskFormat = System.Windows.Forms.MaskFormat.ExcludePromptAndLiterals;
+      // 
       // aInfoLabel
       // 
       this.aInfoLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
@@ -695,72 +761,6 @@
       this.aLabelMenuName.TabIndex = 8;
       this.aLabelMenuName.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
       // 
-      // aReceiverCardNumberTextBox
-      // 
-      this.aReceiverCardNumberTextBox.Dock = System.Windows.Forms.DockStyle.Bottom;
-      this.aReceiverCardNumberTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 22.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-      this.aReceiverCardNumberTextBox.Location = new System.Drawing.Point(0, 51);
-      this.aReceiverCardNumberTextBox.Mask = "0000-0000-0000-0000";
-      this.aReceiverCardNumberTextBox.Name = "aReceiverCardNumberTextBox";
-      this.aReceiverCardNumberTextBox.ReadOnly = true;
-      this.aReceiverCardNumberTextBox.Size = new System.Drawing.Size(414, 49);
-      this.aReceiverCardNumberTextBox.TabIndex = 0;
-      this.aReceiverCardNumberTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-      this.aReceiverCardNumberTextBox.TextMaskFormat = System.Windows.Forms.MaskFormat.ExcludePromptAndLiterals;
-      // 
-      // aReceiverCardNumberRequestLabel
-      // 
-      this.aReceiverCardNumberRequestLabel.Dock = System.Windows.Forms.DockStyle.Top;
-      this.aReceiverCardNumberRequestLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 19.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-      this.aReceiverCardNumberRequestLabel.Location = new System.Drawing.Point(0, 0);
-      this.aReceiverCardNumberRequestLabel.Name = "aReceiverCardNumberRequestLabel";
-      this.aReceiverCardNumberRequestLabel.Size = new System.Drawing.Size(414, 48);
-      this.aReceiverCardNumberRequestLabel.TabIndex = 1;
-      this.aReceiverCardNumberRequestLabel.Text = "Receiver card number:";
-      this.aReceiverCardNumberRequestLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-      // 
-      // aReceiverCardRequestPanel
-      // 
-      this.aReceiverCardRequestPanel.Controls.Add(this.aReceiverCardNumberRequestLabel);
-      this.aReceiverCardRequestPanel.Controls.Add(this.aReceiverCardNumberTextBox);
-      this.aReceiverCardRequestPanel.Enabled = false;
-      this.aReceiverCardRequestPanel.Location = new System.Drawing.Point(136, 60);
-      this.aReceiverCardRequestPanel.Name = "aReceiverCardRequestPanel";
-      this.aReceiverCardRequestPanel.Size = new System.Drawing.Size(414, 100);
-      this.aReceiverCardRequestPanel.TabIndex = 12;
-      // 
-      // aAmountOfMoneyRequestPanel
-      // 
-      this.aAmountOfMoneyRequestPanel.Controls.Add(this.aAmountOfMoneyRequestLabel);
-      this.aAmountOfMoneyRequestPanel.Controls.Add(this.aAmountOfMoneyRequestTextBox);
-      this.aAmountOfMoneyRequestPanel.Enabled = false;
-      this.aAmountOfMoneyRequestPanel.Location = new System.Drawing.Point(136, 60);
-      this.aAmountOfMoneyRequestPanel.Name = "aAmountOfMoneyRequestPanel";
-      this.aAmountOfMoneyRequestPanel.Size = new System.Drawing.Size(414, 100);
-      this.aAmountOfMoneyRequestPanel.TabIndex = 13;
-      // 
-      // aAmountOfMoneyRequestLabel
-      // 
-      this.aAmountOfMoneyRequestLabel.Dock = System.Windows.Forms.DockStyle.Top;
-      this.aAmountOfMoneyRequestLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 19.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-      this.aAmountOfMoneyRequestLabel.Location = new System.Drawing.Point(0, 0);
-      this.aAmountOfMoneyRequestLabel.Name = "aAmountOfMoneyRequestLabel";
-      this.aAmountOfMoneyRequestLabel.Size = new System.Drawing.Size(414, 48);
-      this.aAmountOfMoneyRequestLabel.TabIndex = 1;
-      this.aAmountOfMoneyRequestLabel.Text = "Amount of money:";
-      this.aAmountOfMoneyRequestLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-      // 
-      // aAmountOfMoneyRequestTextBox
-      // 
-      this.aAmountOfMoneyRequestTextBox.Dock = System.Windows.Forms.DockStyle.Bottom;
-      this.aAmountOfMoneyRequestTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 22.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-      this.aAmountOfMoneyRequestTextBox.Location = new System.Drawing.Point(0, 51);
-      this.aAmountOfMoneyRequestTextBox.Name = "aAmountOfMoneyRequestTextBox";
-      this.aAmountOfMoneyRequestTextBox.ReadOnly = true;
-      this.aAmountOfMoneyRequestTextBox.Size = new System.Drawing.Size(414, 49);
-      this.aAmountOfMoneyRequestTextBox.TabIndex = 0;
-      this.aAmountOfMoneyRequestTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-      // 
       // ContextWindow
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -783,14 +783,14 @@
       this.aLeftButtonsDisplayPanel.ResumeLayout(false);
       this.aLeftButtonsDisplayPanel.PerformLayout();
       this.aDisplayPanel.ResumeLayout(false);
+      this.aAmountOfMoneyRequestPanel.ResumeLayout(false);
+      this.aAmountOfMoneyRequestPanel.PerformLayout();
+      this.aReceiverCardRequestPanel.ResumeLayout(false);
+      this.aReceiverCardRequestPanel.PerformLayout();
       this.aCardNumberPanel.ResumeLayout(false);
       this.aCardNumberPanel.PerformLayout();
       this.aPasswordPanel.ResumeLayout(false);
       this.aPasswordPanel.PerformLayout();
-      this.aReceiverCardRequestPanel.ResumeLayout(false);
-      this.aReceiverCardRequestPanel.PerformLayout();
-      this.aAmountOfMoneyRequestPanel.ResumeLayout(false);
-      this.aAmountOfMoneyRequestPanel.PerformLayout();
       this.ResumeLayout(false);
 
     }

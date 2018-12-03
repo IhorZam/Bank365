@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading;
 using System.Windows.Documents;
 using System.Windows.Forms;
+using Bank_365.ATM.Transactions.ServiceClasses;
 using Console = System.Console;
 
 namespace Bank_365.ATM
@@ -206,7 +207,7 @@ namespace Bank_365.ATM
         }
       }
 
-      _transactionController.CreateNewTransaction(CurrentUser.GetCardNumber(), amount, receiver, out bool result);      
+      _transactionController.CreateNewTransaction(CurrentUser.GetCardNumber(), amount, receiver, out TransactionResultData result);      
     }
 
     private void WithdrawMoney()
@@ -226,7 +227,7 @@ namespace Bank_365.ATM
           continue;
         }
       }
-      _transactionController.CreateNewTransaction(CurrentUser.GetCardNumber(), amount);
+      _transactionController.CreateNewTransaction(CurrentUser.GetCardNumber(), amount, out TransactionResultData result);
     }
 
     private void GiveBanknotes(int amount)

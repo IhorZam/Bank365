@@ -4,6 +4,7 @@ using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
@@ -55,21 +56,34 @@ namespace Bank_365.ATM
       File.WriteAllText(path, JsonConvert.SerializeObject(Users));
     }
 
+    private static string getHashSha256(string text)
+    {
+      byte[] bytes = Encoding.UTF8.GetBytes(text);
+      SHA256Managed hashstring = new SHA256Managed();
+      byte[] hash = hashstring.ComputeHash(bytes);
+      string hashString = string.Empty;
+      foreach (byte x in hash)
+      {
+        hashString += String.Format("{0:x2}", x);
+      }
+      return hashString;
+    }
+
     public static void AddUser(string cardNumber, string password)
     {
-      UserProxy newUser = new UserProxy(cardNumber, password);
+      string passHash = getHashSha256(password);
+      UserProxy newUser = new UserProxy(cardNumber, passHash);
       Users.Add(cardNumber, newUser);
     }
 
     public static bool ValidateUser(UserProxy user, string password)
     {
-      //return user.GetPassword().Equals(password);
-      return Users[user.GetCardNumber()].GetPassword().Equals(password);
+      string passHash = getHashSha256(password);
+      return Users[user.GetCardNumber()].GetPassword().Equals(passHash);
     }
 
     public static void BlockUser(UserProxy user)
     {
-      //user.SetBlockedStatus(true);
       Users[user.GetCardNumber()].SetBlockedStatus(true);
     }
   }

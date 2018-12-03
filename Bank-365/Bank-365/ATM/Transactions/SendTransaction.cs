@@ -15,7 +15,7 @@ namespace Bank_365.ATM.Transactions
     private string _receiver;
     private TransactionResultData _result;
 
-    public SendTransaction(string user, int amount, string receiver, out TransactionResultData result) : base(user, TransactionType.Send)
+    public SendTransaction(string user, double amount, string receiver, out TransactionResultData result) : base(user, TransactionType.Send)
     {
       _user = user;
       _amount = amount;

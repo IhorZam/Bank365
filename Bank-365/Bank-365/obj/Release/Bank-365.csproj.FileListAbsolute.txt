@@ -7,6 +7,5 @@ D:\GitHub Repositories\Bank365\Bank-365\Bank-365\obj\Release\Bank-365.csproj.Cor
 D:\GitHub Repositories\Bank365\Bank-365\Bank-365\obj\Release\Bank-365.csproj.CopyComplete
 D:\GitHub Repositories\Bank365\Bank-365\Bank-365\obj\Release\Bank-365.exe
 D:\GitHub Repositories\Bank365\Bank-365\Bank-365\obj\Release\Bank-365.pdb
-D:\GitHub Repositories\Bank365\Bank-365\Bank-365\obj\Release\Bank-365.csprojAssemblyReference.cache
 D:\GitHub Repositories\Bank365\Bank-365\Bank-365\obj\Release\Bank_365.ATM.ContextWindow.resources
 D:\GitHub Repositories\Bank365\Bank-365\Bank-365\obj\Release\Bank-365.csproj.GenerateResource.cache

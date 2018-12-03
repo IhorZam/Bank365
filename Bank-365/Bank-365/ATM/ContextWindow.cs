@@ -1,17 +1,21 @@
-﻿using Newtonsoft.Json;
+﻿using System.Runtime.InteropServices;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Bank_365.ATM.Transactions.ServiceClasses;
 
 namespace Bank_365.ATM
 {
@@ -38,7 +42,7 @@ namespace Bank_365.ATM
 
     private enum Menus
     {
-      LoginMenu, MainMenu, RecheckPass, SendMoney, WithdrawMoney
+      LoginMenu, MainMenu, RecheckPass, SendMoney, WithdrawMoney, GetCredit
     }
 
     public UserProxy CurrentUser
@@ -57,7 +61,7 @@ namespace Bank_365.ATM
       CWThread.Start();
 
       Thread DevThread = new Thread(RunConsole);
-      DevThread.Start();
+      DevThread.Start();      
 
     }
 
@@ -341,7 +345,7 @@ namespace Bank_365.ATM
         {
           inputCardNumber = aReceiverCardNumberTextBox.Text;
           inputMoneyAmount = double.Parse(aAmountOfMoneyRequestTextBox.Text);
-          _transactionController.CreateNewTransaction(CurrentUser.GetCardNumber(), inputMoneyAmount, inputCardNumber, out bool result);
+          _transactionController.CreateNewTransaction(CurrentUser.GetCardNumber(), inputMoneyAmount, inputCardNumber, out TransactionResultData result);
           aAmountOfMoneyRequestTextBox.Text = "";
           aReceiverCardNumberTextBox.Text = "";
           DisablePanel(aAmountOfMoneyRequestPanel);
@@ -408,16 +412,36 @@ namespace Bank_365.ATM
       }
       else if (currentMenu == Menus.WithdrawMoney)
       {
-        int inputMoneyAmount;
-        //**************************************out result!***********************************************//
+        int inputMoneyAmount;        
         if (aAmountOfMoneyRequestPanel.Enabled)
         {
-          inputMoneyAmount = int.Parse(aAmountOfMoneyRequestTextBox.Text);
-          _transactionController.CreateNewTransaction(CurrentUser.GetCardNumber(), inputMoneyAmount);
+          inputMoneyAmount = int.Parse(aAmountOfMoneyRequestTextBox.Text);          
+          _transactionController.CreateNewTransaction(CurrentUser.GetCardNumber(), inputMoneyAmount, out TransactionResultData result);
+          aAmountOfMoneyRequestTextBox.Text = "";
+          aReceiverCardNumberTextBox.Text = "";
+          DisablePanel(aAmountOfMoneyRequestPanel);          
+          return;
+        }
+        else
+        {
+          currentMenu = Menus.MainMenu;
+          RedrawWindow();
+          return;
+        }
+      }
+      else if (currentMenu == Menus.GetCredit)
+      {
+        int inputCreditSize;
+        if (aAmountOfMoneyRequestPanel.Enabled)
+        {
+          inputCreditSize = int.Parse(aAmountOfMoneyRequestTextBox.Text);
+          _transactionController.CreateNewTransaction(CurrentUser.GetCardNumber(), new UserProxy.CreditInfo
+          {
+
+          });
           aAmountOfMoneyRequestTextBox.Text = "";
           aReceiverCardNumberTextBox.Text = "";
           DisablePanel(aAmountOfMoneyRequestPanel);
-          aInfoLabel.Text = "Your transaction request is sent for processing.";
           return;
         }
         else
