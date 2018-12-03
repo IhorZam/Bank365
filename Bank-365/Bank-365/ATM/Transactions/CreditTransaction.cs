@@ -56,8 +56,8 @@ namespace Bank_365.ATM.Transactions
           return true;
         }
       }
-      DataBase.Users[base.UserId].AddTransaction(_key + _monthLeft, new TransactionResultData(false, TransactionDeniedReason.NotEnoughMoney));
-      return false;
+      //DataBase.Users[base.UserId].AddTransaction(_key + _monthLeft, new TransactionResultData(false, TransactionDeniedReason.NotEnoughMoney));
+      return true;
     }
   }
 }

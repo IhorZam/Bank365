@@ -379,6 +379,7 @@
       this.aInputButton0.TabIndex = 9;
       this.aInputButton0.Text = "0";
       this.aInputButton0.UseVisualStyleBackColor = true;
+      this.aInputButton0.Click += new System.EventHandler(this.aInputButton0_Click);
       // 
       // aInputButtonDot
       // 
@@ -391,6 +392,7 @@
       this.aInputButtonDot.TabIndex = 10;
       this.aInputButtonDot.Text = ".";
       this.aInputButtonDot.UseVisualStyleBackColor = true;
+      this.aInputButtonDot.Click += new System.EventHandler(this.aInputButtonDot_Click);
       // 
       // aInputButtonZeros
       // 
@@ -403,6 +405,7 @@
       this.aInputButtonZeros.TabIndex = 11;
       this.aInputButtonZeros.Text = "00";
       this.aInputButtonZeros.UseVisualStyleBackColor = true;
+      this.aInputButtonZeros.Click += new System.EventHandler(this.aInputButtonZeros_Click);
       // 
       // aInputButtonCancel
       // 

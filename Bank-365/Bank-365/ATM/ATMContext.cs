@@ -207,7 +207,7 @@ namespace Bank_365.ATM
         }
       }
 
-      _transactionController.CreateNewTransaction(CurrentUser.GetCardNumber(), amount, receiver, out TransactionResultData result);      
+      _transactionController.CreateNewTransaction(CurrentUser.GetCardNumber(), amount, receiver);      
     }
 
     private void WithdrawMoney()
@@ -227,7 +227,7 @@ namespace Bank_365.ATM
           continue;
         }
       }
-      _transactionController.CreateNewTransaction(CurrentUser.GetCardNumber(), amount, out TransactionResultData result);
+      _transactionController.CreateNewTransaction(CurrentUser.GetCardNumber(), amount);
     }
 
     private void GiveBanknotes(int amount)

@@ -19,6 +19,7 @@ namespace Bank_365.ATM.Transactions
       }
       _amount = amount;
       _key = key;
+      _user = user;
     }
 
     public override bool Do()

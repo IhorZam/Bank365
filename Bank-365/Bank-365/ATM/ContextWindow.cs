@@ -45,6 +45,11 @@ namespace Bank_365.ATM
       LoginMenu, MainMenu, RecheckPass, SendMoney, WithdrawMoney, GetCredit
     }
 
+    private int[] creditTariffs =
+    {
+      0, 20, 19, 18, 17, 16, 15, 14, 13
+    };
+
     public UserProxy CurrentUser
     {
       get { return _currentUser; }
@@ -131,16 +136,23 @@ namespace Bank_365.ATM
             aLabelMenuName.Text = "Main menu";
             ClearSidepanelsButtons();
 
+            aButton2Label.Text = "Display your credit info";
             aButton3Label.Text = "Display amount of money";
             aButton4Label.Text = "Withdraw money";
+            aButton7Label.Text = "Get credit";
             aButton8Label.Text = "Send money";
 
+            aButton2.Enabled = true;
             aButton3.Enabled = true;
             aButton4.Enabled = true;
+            aButton7.Enabled = true;
             aButton8.Enabled = true;
+            aButton2.Click += (sender, args) => DisplayCreditInfo();
             aButton3.Click += (sender, args) => DisplayAmountOfMoney();
             aButton4.Click += (sender, args) => WithdrawMoney();
+            aButton7.Click += (sender, args) => GetCreditMenu();
             aButton8.Click += (sender, args) => SendMoney();
+
             break;
           }
         case Menus.RecheckPass:
@@ -167,6 +179,40 @@ namespace Bank_365.ATM
             EnablePanel(aAmountOfMoneyRequestPanel);
             break;
           }
+        case Menus.GetCredit:
+        {
+          aLabelMenuName.Text = "Credit menu";
+          ClearSidepanelsButtons();
+          EnablePanel(aAmountOfMoneyRequestPanel);
+
+          aButton1Label.Text = "6 months \n" + creditTariffs[1] + "%";
+          aButton2Label.Text = "12 months \n" + creditTariffs[2] + "%";
+          aButton3Label.Text = "18 months \n" + creditTariffs[3] + "%";
+          aButton4Label.Text = "24 months \n" + creditTariffs[4] + "%";
+          aButton5Label.Text = "30 months \n" + creditTariffs[5] + "%";
+          aButton6Label.Text = "36 months \n" + creditTariffs[6] + "%";
+          aButton7Label.Text = "42 months \n" + creditTariffs[7] + "%";
+          aButton8Label.Text = "48 months \n" + creditTariffs[8] + "%";
+
+            foreach (Button button in panel1.Controls)
+          {
+            button.Enabled = true;
+          }
+          foreach (Button button in panel2.Controls)
+          {
+            button.Enabled = true;
+          }
+
+          aButton1.Click += (sender, args) => GetCredit(1);
+          aButton2.Click += (sender, args) => GetCredit(2);
+          aButton3.Click += (sender, args) => GetCredit(3);
+          aButton4.Click += (sender, args) => GetCredit(4);
+          aButton5.Click += (sender, args) => GetCredit(5);
+          aButton6.Click += (sender, args) => GetCredit(6);
+          aButton7.Click += (sender, args) => GetCredit(7);
+          aButton8.Click += (sender, args) => GetCredit(8);
+            break;
+        }
       }
     }
 
@@ -345,11 +391,33 @@ namespace Bank_365.ATM
         {
           inputCardNumber = aReceiverCardNumberTextBox.Text;
           inputMoneyAmount = double.Parse(aAmountOfMoneyRequestTextBox.Text);
-          _transactionController.CreateNewTransaction(CurrentUser.GetCardNumber(), inputMoneyAmount, inputCardNumber, out TransactionResultData result);
+          string key = _transactionController.CreateNewTransaction(CurrentUser.GetCardNumber(), inputMoneyAmount, inputCardNumber);
           aAmountOfMoneyRequestTextBox.Text = "";
           aReceiverCardNumberTextBox.Text = "";
           DisablePanel(aAmountOfMoneyRequestPanel);
-          aInfoLabel.Text = "Your transaction request is sent for processing.";
+          aInfoLabel.Text = "Your transaction request is processing...";
+          TransactionResultData result = null;
+          while (result == null)
+          {
+            try
+            {
+              result = CurrentUser.GetTransactionHistory()[key];
+            }
+            catch (KeyNotFoundException)
+            {
+              continue;
+            }
+          }
+          if (result.Done)
+          {
+            aInfoLabel.Text = "Transaction successful.";
+          }
+          else
+          {
+            aInfoLabel.Text =
+              "Transaction unsuccessful. Reason: " + ((result.Reason == TransactionDeniedReason.NotEnoughMoney)
+                ? "Not enough money" : "Unknown");
+          }
           return;
         }
         else
@@ -416,10 +484,33 @@ namespace Bank_365.ATM
         if (aAmountOfMoneyRequestPanel.Enabled)
         {
           inputMoneyAmount = int.Parse(aAmountOfMoneyRequestTextBox.Text);          
-          _transactionController.CreateNewTransaction(CurrentUser.GetCardNumber(), inputMoneyAmount, out TransactionResultData result);
+          string key = _transactionController.CreateNewTransaction(CurrentUser.GetCardNumber(), inputMoneyAmount);
           aAmountOfMoneyRequestTextBox.Text = "";
           aReceiverCardNumberTextBox.Text = "";
-          DisablePanel(aAmountOfMoneyRequestPanel);          
+          TransactionResultData result = null;
+          while (result == null)
+          {
+            try
+            {
+              result = CurrentUser.GetTransactionHistory()[key];
+            }
+            catch (KeyNotFoundException)
+            {
+              continue;
+            }            
+          }
+          DisablePanel(aAmountOfMoneyRequestPanel);
+          if (result.Done)
+          {
+            aInfoLabel.Text = "Take your money";
+            GiveBanknotes(inputMoneyAmount);
+          }
+          else
+          {
+            aInfoLabel.Text =
+              "Transaction unsuccessful. Reason: " + ((result.Reason == TransactionDeniedReason.NotEnoughMoney)
+                ? "Not enough money" : "Unknown");
+          }
           return;
         }
         else
@@ -431,47 +522,41 @@ namespace Bank_365.ATM
       }
       else if (currentMenu == Menus.GetCredit)
       {
-        int inputCreditSize;
-        if (aAmountOfMoneyRequestPanel.Enabled)
-        {
-          inputCreditSize = int.Parse(aAmountOfMoneyRequestTextBox.Text);
-          _transactionController.CreateNewTransaction(CurrentUser.GetCardNumber(), new UserProxy.CreditInfo
-          {
-
-          });
-          aAmountOfMoneyRequestTextBox.Text = "";
-          aReceiverCardNumberTextBox.Text = "";
-          DisablePanel(aAmountOfMoneyRequestPanel);
-          return;
-        }
-        else
-        {
-          currentMenu = Menus.MainMenu;
-          RedrawWindow();
-          return;
-        }
+        
       }
     }
 
     private void aInputButtonClear_Click(object sender, EventArgs e)
     {
-      if (currentMenu == Menus.LoginMenu)
+      switch (currentMenu)
       {
-        aCardNumberTextBox.Text = "";
-        aPasswordTextBox.Text = "";
-      }
-      else if (currentMenu == Menus.SendMoney)
-      {
-        aReceiverCardNumberTextBox.Text = "";
-        aAmountOfMoneyRequestTextBox.Text = "";
-      }
-      else if (currentMenu == Menus.RecheckPass)
-      {
-        aPasswordTextBox.Text = "";
-      }
-      else if (currentMenu == Menus.WithdrawMoney)
-      {
-        aAmountOfMoneyRequestTextBox.Text = "";
+        case Menus.LoginMenu:
+        {
+          aCardNumberTextBox.Text = "";
+          aPasswordTextBox.Text = "";
+          break;
+        }
+        case Menus.SendMoney:
+        {
+          aReceiverCardNumberTextBox.Text = "";
+          aAmountOfMoneyRequestTextBox.Text = "";
+          break;
+        }
+        case Menus.RecheckPass:
+        {
+          aPasswordTextBox.Text = "";
+          break;
+        }
+        case Menus.WithdrawMoney:
+        {
+          aAmountOfMoneyRequestTextBox.Text = "";
+          break;
+        }
+        case Menus.GetCredit:
+        {
+          aAmountOfMoneyRequestTextBox.Text = "";
+          break;
+          }
       }
     }
 
@@ -521,6 +606,14 @@ namespace Bank_365.ATM
           RedrawWindow();
           break;
           }
+        case Menus.GetCredit:
+        {
+          aAmountOfMoneyRequestTextBox.Text = "";
+          DisablePanel(aAmountOfMoneyRequestPanel);
+          currentMenu = Menus.MainMenu;
+          RedrawWindow();
+          break;
+        }
       }
     }
 
@@ -553,17 +646,84 @@ namespace Bank_365.ATM
       RedrawWindow();
 
       return;
+    }    
+
+    private void GetCreditMenu()
+    {      
+      currentMenu = Menus.GetCredit;
+
+      RedrawWindow();
+      aInfoLabel.Text = "Type in amount of money (minimum - 10000, maximum - your credit limit) and choose desirable credit tariff.";
+
+      return;
     }
 
-    private void PayCredit()
+    private void GetCredit(int v)
     {
-      throw new NotImplementedException();
-    }
+      int inputCreditSize;
+      if (aAmountOfMoneyRequestPanel.Enabled)
+      {
+        try
+        {
+          inputCreditSize = int.Parse(aAmountOfMoneyRequestTextBox.Text);
+        }
+        catch (FormatException)
+        {
+          return;
+        }
 
-    private void GetCredit()
-    {
-      throw new NotImplementedException();
-
+        if (inputCreditSize < 10000)
+        {
+          aInfoLabel.Text = "Minimum money amount - 10000";
+          aAmountOfMoneyRequestTextBox.Text = "";
+          return;
+        }
+        else if (inputCreditSize > CurrentUser.CreditLimit())
+        {
+          aInfoLabel.Text = "Typed amount is higher than your credit limit. \n";
+          aInfoLabel.Text += "(Your credit limit: " + CurrentUser.CreditLimit() + ")";
+          aAmountOfMoneyRequestTextBox.Text = "";
+          return;
+        }
+        else
+        {
+          string key = _transactionController.CreateNewTransaction(CurrentUser.GetCardNumber(), new UserProxy.CreditInfo
+          {
+            Amount = inputCreditSize, Percent = creditTariffs[v], Time = v*6
+          });
+          aAmountOfMoneyRequestTextBox.Text = "";
+          DisablePanel(aAmountOfMoneyRequestPanel);
+          TransactionResultData result = null;
+          while (result == null)
+          {
+            try
+            {
+              result = CurrentUser.GetTransactionHistory()[key];
+            }
+            catch (KeyNotFoundException)
+            {
+              continue;
+            }
+          }
+          if (result.Done)
+          {
+            aInfoLabel.Text = "You successfully took a credit";
+          }
+          else
+          {
+            aInfoLabel.Text =
+              "Transaction unsuccessful. Reason: " + ((result.Reason == TransactionDeniedReason.NotEnoughMoney)
+                ? "Not enough money" : "Unknown");
+          }
+          return;
+        }        
+      }
+      else
+      {
+        currentMenu = Menus.MainMenu;
+        RedrawWindow();
+        return;
+      }
     }
 
     private void SendMoney()
@@ -603,14 +763,30 @@ namespace Bank_365.ATM
 
     private void GiveBanknotes(int amount)
     {
-      throw new NotImplementedException();
-    }
+      
+    }    
 
     private void DisplayAmountOfMoney()
     {
       aInfoLabel.Text = "";
       aInfoLabel.Text += "Current amount of money on this card: \n";
       aInfoLabel.Text += (CurrentUser.GetMoneyAmount());
+    }
+
+    private void DisplayCreditInfo()
+    {
+      aInfoLabel.Text = "";
+      UserProxy.CreditInfo info = CurrentUser.GetCreditInfo();
+      aInfoLabel.Text += "Current credit: ";
+      if (info.Amount == 0)
+      {
+        aInfoLabel.Text += "none \n";
+      }
+      else
+      {
+        aInfoLabel.Text += "\n Amount: " + info.Amount + "\n Percent: " + info.Percent + "\n Time: " + info.Time + "\n";
+      }
+      aInfoLabel.Text += "Credit limit: " + CurrentUser.CreditLimit();
     }
 
     private static bool ValidateInputCardPassword(string inputCardPassword)
@@ -868,61 +1044,76 @@ namespace Bank_365.ATM
 
     #endregion
 
-    private void ClickInputButton(int v)
+    private void ClickInputButton(string v)
     {
       if (aPasswordPanel.Enabled == true)
-        aPasswordTextBox.AppendText(v.ToString());
+        aPasswordTextBox.AppendText(v);
       if (aCardNumberPanel.Enabled == true)
-        aCardNumberTextBox.AppendText(v.ToString());
+        aCardNumberTextBox.AppendText(v);
       if (aReceiverCardRequestPanel.Enabled == true)
-        aReceiverCardNumberTextBox.AppendText(v.ToString());
+        aReceiverCardNumberTextBox.AppendText(v);
       if (aAmountOfMoneyRequestPanel.Enabled == true)
-        aAmountOfMoneyRequestTextBox.AppendText(v.ToString());
+        aAmountOfMoneyRequestTextBox.AppendText(v);
     }
 
     private void aInputButton1_Click(object sender, EventArgs e)
     {
-      ClickInputButton(1);
+      ClickInputButton("1");
     }
 
     private void aInputButton2_Click(object sender, EventArgs e)
     {
-      ClickInputButton(2);
+      ClickInputButton("2");
     }
 
     private void aInputButton3_Click(object sender, EventArgs e)
     {
-      ClickInputButton(3);
+      ClickInputButton("3");
     }
 
     private void aInputButton4_Click(object sender, EventArgs e)
     {
-      ClickInputButton(4);
+      ClickInputButton("4");
     }
 
     private void aInputButton5_Click(object sender, EventArgs e)
     {
-      ClickInputButton(5);
+      ClickInputButton("5");
     }
 
     private void aInputButton6_Click(object sender, EventArgs e)
     {
-      ClickInputButton(6);
+      ClickInputButton("6");
     }
 
     private void aInputButton7_Click(object sender, EventArgs e)
     {
-      ClickInputButton(7);
+      ClickInputButton("7");
     }
 
     private void aInputButton8_Click(object sender, EventArgs e)
     {
-      ClickInputButton(8);
+      ClickInputButton("8");
     }
 
     private void aInputButton9_Click(object sender, EventArgs e)
     {
-      ClickInputButton(9);
+      ClickInputButton("9");
+    }
+
+    private void aInputButton0_Click(object sender, EventArgs e)
+    {
+      ClickInputButton("0");
+    }
+
+    private void aInputButtonDot_Click(object sender, EventArgs e)
+    {
+      ClickInputButton(".");
+    }
+
+    private void aInputButtonZeros_Click(object sender, EventArgs e)
+    {
+      ClickInputButton("00");
     }
   }
 }

@@ -21,6 +21,11 @@ namespace Bank_365.ATM
       return _user.CreditLimit;
     }
 
+    public CreditInfo GetCreditInfo()
+    {
+      return _user.GetCreditInfo();
+    }
+
     public UserProxy(string cardNumber, string cardPassword)
     {
       _user = new AtmUser(cardNumber, cardPassword);
@@ -104,6 +109,8 @@ namespace Bank_365.ATM
 
       private bool _blocked = false;
 
+      private CreditInfo _creditInfo;
+
       private Dictionary<string, TransactionResultData> _history;
 
       public double CreditLimit => _creditLimit;
@@ -118,6 +125,10 @@ namespace Bank_365.ATM
         _creditLimit = 0;
         _passwordAttempts = 3;
         _history = new Dictionary<string, TransactionResultData>();
+        _creditInfo = new CreditInfo()
+        {
+          Amount = 0, Percent = 0, Time = 0
+        };
       }
 
       internal bool WithdrawMoney(double amount)
@@ -180,6 +191,11 @@ namespace Bank_365.ATM
       {
         _passwordAttempts = i;
       }
+
+      internal CreditInfo GetCreditInfo()
+      {
+        return _creditInfo;
+      }
     }
 
     public struct CreditInfo
@@ -189,10 +205,16 @@ namespace Bank_365.ATM
       // Time in number of month
       public int Time;
       public double Percent;
-    }
+    }    
 
     internal string GetUserInfo()
     {
+      string transactionHistory = "";
+      foreach (var element in GetTransactionHistory())
+      {
+        transactionHistory +="\n" + element.Key + ": " + "Done? " + element.Value.Done + ". Reason? " + element.Value.Reason;
+      }
+      CreditInfo creditInfo = GetCreditInfo();
       string info = "";
       info += "----------------------------------" + "\n";
       info += "Card number: " + GetCardNumber() + "\n";
@@ -200,7 +222,10 @@ namespace Bank_365.ATM
       info += "Password attempts left: " + GetPasswordAttempts() + "\n";
       info += "Money: " + GetMoneyAmount() + "\n";
       info += "Is blocked: " + GetBlockedStatus() + "\n";
+      info += "Credit info: " + "Amount: " + creditInfo.Amount + ", Percent: " + creditInfo.Percent +
+              ", Time: " + creditInfo.Time + "\n";
       info += "Credit limit: " + CreditLimit() + "\n";
+      info += "Transaction history: " + transactionHistory + "\n";
       info += "----------------------------------";
       return info;
     }
