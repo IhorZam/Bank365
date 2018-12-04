@@ -82,6 +82,11 @@ namespace Bank_365.ATM
       return _user.GetMoneyAmount();
     }
 
+    public void SetCreditInfo(CreditInfo info)
+    {
+      _user.SetCreditInfo(info);
+    }
+
     public Dictionary<string, TransactionResultData> GetTransactionHistory()
     {
       return _user.History;
@@ -127,7 +132,9 @@ namespace Bank_365.ATM
         _history = new Dictionary<string, TransactionResultData>();
         _creditInfo = new CreditInfo()
         {
-          Amount = 0, Percent = 0, Time = 0
+          Amount = 0,
+          Percent = 0,
+          Time = 0
         };
       }
 
@@ -150,7 +157,7 @@ namespace Bank_365.ATM
       public void SetCreditLimit(double newLimit)
       {
         _creditLimit = newLimit;
-      }     
+      }
 
       internal string GetPassword()
       {
@@ -196,6 +203,14 @@ namespace Bank_365.ATM
       {
         return _creditInfo;
       }
+
+      internal void SetCreditInfo(CreditInfo info)
+      {
+        _creditInfo = new CreditInfo()
+        {
+          Amount = info.Amount, Percent = info.Percent, Time = info.Time
+        };
+      }
     }
 
     public struct CreditInfo
@@ -205,14 +220,16 @@ namespace Bank_365.ATM
       // Time in number of month
       public int Time;
       public double Percent;
-    }    
+    }
 
     internal string GetUserInfo()
     {
       string transactionHistory = "";
+      int i = 1;
       foreach (var element in GetTransactionHistory())
       {
-        transactionHistory +="\n" + element.Key + ": " + "Done? " + element.Value.Done + ". Reason? " + element.Value.Reason;
+        transactionHistory += "\n" + element.Value.DateTime + " : Type? " + element.Value.Type + ". Done? " + element.Value.Done + ". Reason? " + element.Value.Reason + ". Change? " +
+                             (element.Value.Reached ? "+" : "-") + element.Value.Amount + ". ";
       }
       CreditInfo creditInfo = GetCreditInfo();
       string info = "";

@@ -636,11 +636,13 @@
       this.aAmountOfMoneyRequestTextBox.Dock = System.Windows.Forms.DockStyle.Bottom;
       this.aAmountOfMoneyRequestTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 22.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
       this.aAmountOfMoneyRequestTextBox.Location = new System.Drawing.Point(0, 51);
+      this.aAmountOfMoneyRequestTextBox.Mask = "000000";
       this.aAmountOfMoneyRequestTextBox.Name = "aAmountOfMoneyRequestTextBox";
       this.aAmountOfMoneyRequestTextBox.ReadOnly = true;
       this.aAmountOfMoneyRequestTextBox.Size = new System.Drawing.Size(414, 49);
       this.aAmountOfMoneyRequestTextBox.TabIndex = 0;
       this.aAmountOfMoneyRequestTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+      this.aAmountOfMoneyRequestTextBox.ValidatingType = typeof(int);
       // 
       // aReceiverCardRequestPanel
       // 

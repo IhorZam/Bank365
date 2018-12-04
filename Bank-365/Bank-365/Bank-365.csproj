@@ -72,7 +72,6 @@
     <Reference Include="WindowsFormsIntegration" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ATM\AtmContext.cs" />
     <Compile Include="ATM\ContextWindow.cs">
       <SubType>Form</SubType>
     </Compile>

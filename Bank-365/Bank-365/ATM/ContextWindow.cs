@@ -170,6 +170,7 @@ namespace Bank_365.ATM
             aLabelMenuName.Text = "Send money transaction";
             ClearSidepanelsButtons();
             EnablePanel(aReceiverCardRequestPanel);
+            aAmountOfMoneyRequestTextBox.Mask = "000000";            
             break;
           }
         case Menus.WithdrawMoney:
@@ -177,6 +178,7 @@ namespace Bank_365.ATM
             aLabelMenuName.Text = "Money withdrawal";
             ClearSidepanelsButtons();
             EnablePanel(aAmountOfMoneyRequestPanel);
+            aAmountOfMoneyRequestTextBox.Mask = "0000";
             break;
           }
         case Menus.GetCredit:
@@ -184,8 +186,9 @@ namespace Bank_365.ATM
           aLabelMenuName.Text = "Credit menu";
           ClearSidepanelsButtons();
           EnablePanel(aAmountOfMoneyRequestPanel);
+          aAmountOfMoneyRequestTextBox.Mask = "000000";
 
-          aButton1Label.Text = "6 months \n" + creditTariffs[1] + "%";
+            aButton1Label.Text = "6 months \n" + creditTariffs[1] + "%";
           aButton2Label.Text = "12 months \n" + creditTariffs[2] + "%";
           aButton3Label.Text = "18 months \n" + creditTariffs[3] + "%";
           aButton4Label.Text = "24 months \n" + creditTariffs[4] + "%";
@@ -416,7 +419,7 @@ namespace Bank_365.ATM
           {
             aInfoLabel.Text =
               "Transaction unsuccessful. Reason: " + ((result.Reason == TransactionDeniedReason.NotEnoughMoney)
-                ? "Not enough money" : "Unknown");
+                ? "Not enough money" : "You can't send money to yourself");
           }
           return;
         }
@@ -483,7 +486,14 @@ namespace Bank_365.ATM
         int inputMoneyAmount;        
         if (aAmountOfMoneyRequestPanel.Enabled)
         {
-          inputMoneyAmount = int.Parse(aAmountOfMoneyRequestTextBox.Text);          
+          try
+          {
+            inputMoneyAmount = int.Parse(aAmountOfMoneyRequestTextBox.Text);
+          }
+          catch (FormatException)
+          {
+            return;
+          }                    
           string key = _transactionController.CreateNewTransaction(CurrentUser.GetCardNumber(), inputMoneyAmount);
           aAmountOfMoneyRequestTextBox.Text = "";
           aReceiverCardNumberTextBox.Text = "";
@@ -522,7 +532,12 @@ namespace Bank_365.ATM
       }
       else if (currentMenu == Menus.GetCredit)
       {
-        
+        if (aAmountOfMoneyRequestPanel.Enabled == false)
+        {
+          currentMenu = Menus.MainMenu;
+          RedrawWindow();
+          return;
+        }
       }
     }
 
@@ -649,11 +664,17 @@ namespace Bank_365.ATM
     }    
 
     private void GetCreditMenu()
-    {      
+    {
+      if (CurrentUser.GetCreditInfo().Amount != 0)
+      {
+        aInfoLabel.Text = "You already have a credit!";
+        return;
+      }
+       
       currentMenu = Menus.GetCredit;
 
       RedrawWindow();
-      aInfoLabel.Text = "Type in amount of money (minimum - 10000, maximum - your credit limit) and choose desirable credit tariff.";
+      aInfoLabel.Text = "Type in amount of money (minimum - 1000, maximum - your credit limit) and choose desirable credit tariff.";
 
       return;
     }
@@ -672,9 +693,9 @@ namespace Bank_365.ATM
           return;
         }
 
-        if (inputCreditSize < 10000)
+        if (inputCreditSize < 1000)
         {
-          aInfoLabel.Text = "Minimum money amount - 10000";
+          aInfoLabel.Text = "Minimum money amount - 1000";
           aAmountOfMoneyRequestTextBox.Text = "";
           return;
         }
@@ -687,13 +708,14 @@ namespace Bank_365.ATM
         }
         else
         {
+          aAmountOfMoneyRequestTextBox.Text = "";
+          TransactionResultData result = null;
+          ClearSidepanelsButtons();
+          DisablePanel(aAmountOfMoneyRequestPanel);
           string key = _transactionController.CreateNewTransaction(CurrentUser.GetCardNumber(), new UserProxy.CreditInfo
           {
             Amount = inputCreditSize, Percent = creditTariffs[v], Time = v*6
-          });
-          aAmountOfMoneyRequestTextBox.Text = "";
-          DisablePanel(aAmountOfMoneyRequestPanel);
-          TransactionResultData result = null;
+          });          
           while (result == null)
           {
             try
@@ -704,16 +726,15 @@ namespace Bank_365.ATM
             {
               continue;
             }
-          }
+          }                    
           if (result.Done)
           {
-            aInfoLabel.Text = "You successfully took a credit";
+            aInfoLabel.Text = "You successfully took a credit. Money added to your account";            
           }
           else
           {
             aInfoLabel.Text =
-              "Transaction unsuccessful. Reason: " + ((result.Reason == TransactionDeniedReason.NotEnoughMoney)
-                ? "Not enough money" : "Unknown");
+              "Transaction unsuccessful. Reason: " + result.Reason;
           }
           return;
         }        
@@ -1002,7 +1023,17 @@ namespace Bank_365.ATM
 
     private static void ViewUsersInfo()
     {
-      if (DataBase.Users.Count != 0)
+      int count = 0;
+      try
+      {
+        count = DataBase.Users.Count;
+      }
+      catch (Exception)
+      {
+        Console.WriteLine("There are no existing users yet.");
+        return;
+      }      
+      if (count != 0)
       {
         Console.WriteLine("List of existing cards: ");
         int i = 1;

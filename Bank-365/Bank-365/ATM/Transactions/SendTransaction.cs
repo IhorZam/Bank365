@@ -24,20 +24,25 @@ namespace Bank_365.ATM.Transactions
     public override bool Do()
     {
       var receiver = DataBase.Users[_receiver];
+      if (UserId == _receiver)
+      {
+        _result = new TransactionResultData(false, DateTime.Now, _amount, false, TransactionType.Send, TransactionDeniedReason.Other);
+        Console.WriteLine("You can't send money to yourself");
+        DataBase.Users[UserId].AddTransaction(_key, _result);
+        return false;
+      }
       if (DataBase.Users[UserId].WithdrawMoney(_amount))
       {
         receiver.AddMoney(_amount);
-        _result = new TransactionResultData(true, DateTime.Now, _amount, false);
+        _result = new TransactionResultData(true, DateTime.Now, _amount, false, TransactionType.Send);
         Console.WriteLine("Money sent to " + receiver.GetCardNumber() + ". Amount: " + _amount);
         DataBase.Users[UserId].AddTransaction(_key, _result);
         return true;
       }
-      _result = new TransactionResultData(false, DateTime.Now, _amount, false, TransactionDeniedReason.NotEnoughMoney);
+      _result = new TransactionResultData(false, DateTime.Now, _amount, false, TransactionType.Send, TransactionDeniedReason.NotEnoughMoney);
       Console.WriteLine("Not enough money on card.");
       DataBase.Users[UserId].AddTransaction(_key, _result);
       return false;
-
-
     }
   }
 }

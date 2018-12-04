@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Reflection;
+using System.Security.Principal;
 using System.Threading;
 using Bank_365.ATM.Transactions;
 using Bank_365.ATM.Transactions.ServiceClasses;
@@ -90,6 +91,10 @@ namespace Bank_365.ATM
         {
           continue;
         }
+        finally
+        {
+          Thread.Sleep(10000);
+        }
       }
     }
 
@@ -120,9 +125,10 @@ namespace Bank_365.ATM
         transaction.Do();
         CreditTransaction aux = (CreditTransaction)transaction;
         if (aux.CreditPayed)
+        {
           _creditTransactions.Remove(transaction);
-
-        ContextWindow.UpdateDatabaseFile();
+        }          
+        ContextWindow.UpdateDatabaseFile();        
       }
     }    
 

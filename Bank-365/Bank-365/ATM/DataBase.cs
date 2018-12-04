@@ -35,24 +35,16 @@ namespace Bank_365.ATM
       catch (FileNotFoundException e)
       {
         File.WriteAllText(path, JsonConvert.SerializeObject(Users));
+        _users = JsonConvert.DeserializeObject<Dictionary<string, UserProxy>>(dataBaseString);
       }
 
       _users = JsonConvert.DeserializeObject<Dictionary<string, UserProxy>>(dataBaseString);
-
-      //usersData = JsonConvert.DeserializeObject<Dictionary<string, UserProxy>>(File.ReadAllText(path));
-
-      //_users = new Dictionary<string, UserProxy>();
-
-      //foreach (KeyValuePair<string, UserProxy> user in usersData)
-      //{
-      //  _users.Add(user.Key, user.Value);
-      //}
     }
 
     public static void ClearDict(string path)
     {
       File.Delete(path);
-      _users.Clear();
+      _users = new Dictionary<string, UserProxy>();
       File.WriteAllText(path, JsonConvert.SerializeObject(Users));
     }
 

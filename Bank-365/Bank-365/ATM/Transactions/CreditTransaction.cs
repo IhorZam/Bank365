@@ -26,6 +26,9 @@ namespace Bank_365.ATM.Transactions
     public bool CreditPayed => _creditPayed;
 
 
+    private bool initialized = false;
+
+
     public CreditTransaction(string user, UserProxy.CreditInfo creditInfo, string key) : base(user, TransactionType.Credit)
     {
       if (DataBase.Users[user].CreditLimit() < creditInfo.Amount)
@@ -33,18 +36,21 @@ namespace Bank_365.ATM.Transactions
         throw new TransactionDeniedException();
       }
       _creditInfo = creditInfo;
-      _amountLeft = creditInfo.Amount * creditInfo.Percent;
+      _amountLeft = creditInfo.Amount * creditInfo.Percent/100;
       _monthLeft = _creditInfo.Time;
-      _monthPay = (_creditInfo.Amount * _creditInfo.Percent) / _creditInfo.Time;
+      _monthPay = (_creditInfo.Amount * _creditInfo.Percent/100) / _creditInfo.Time;
+      _currentMonthNumeber = DateTime.Today.Month;
       _key = key;
     }
 
     public override bool Do()
     {
-      if (_monthLeft == _creditInfo.Time)
+      if (!initialized)
       {
         DataBase.Users[UserId].AddMoney(_creditInfo.Amount);
-        DataBase.Users[base.UserId].AddTransaction(_key + _monthLeft, new TransactionResultData(true, DateTime.Now, _creditInfo.Amount, true));
+        DataBase.Users[UserId].SetCreditInfo(_creditInfo);
+        DataBase.Users[base.UserId].AddTransaction(_key, new TransactionResultData(true, DateTime.Now, _creditInfo.Amount, true, TransactionType.Credit));
+        initialized = true;
         return true;
       }
       int month = DateTime.Today.Month;
@@ -57,14 +63,14 @@ namespace Bank_365.ATM.Transactions
           if (--_monthLeft == 0)
           {
             _creditPayed = true;
+            DataBase.Users[base.UserId].SetCreditInfo(new UserProxy.CreditInfo() {Amount = 0, Percent = 0, Time = 0});
           }
           DataBase.Users[base.UserId].AddTransaction(_key + _monthLeft,
-            new TransactionResultData(true, DateTime.Now, _monthPay, false));
+            new TransactionResultData(true, DateTime.Now, _monthPay, false, TransactionType.Credit));
           return true;
         }
         DataBase.Users[base.UserId].AddTransaction(_key + _monthLeft,
-            new TransactionResultData(false, DateTime.Now, _monthPay, false, TransactionDeniedReason.NotEnoughMoney));
-
+            new TransactionResultData(false, DateTime.Now, _monthPay, false, TransactionType.Credit, TransactionDeniedReason.NotEnoughMoney));
       }
       return true;
     }
